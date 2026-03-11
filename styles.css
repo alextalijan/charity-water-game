@@ -1,0 +1,776 @@
+/* ============================================
+   charity: water — Higher or Lower Game
+   Full Stylesheet — matches wireframe spec
+   ============================================ */
+
+/* ─── BRAND PALETTE ────────────────────────── */
+:root {
+  --yellow:     #FFC907;
+  --yellow-dk:  #e6b400;
+  --blue:       #003366;
+  --blue-dk:    #002244;
+  --light-blue: #77A8BB;
+  --cream:      #FFF7E1;
+  --dark:       #1A1A1A;
+  --peach:      #FED8C1;
+  --brown:      #BF6C46;
+  --gray:       #CBCCD1;
+  --white:      #ffffff;
+  --correct:    #34d399;
+  --wrong:      #f87171;
+  --header-h:   80px;
+}
+
+/* ─── RESET ────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cream);
+  color: var(--dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================
+   PERSISTENT HEADER
+   ============================================ */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: var(--header-h);
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 max(24px, calc((100vw - 1400px) / 2));
+  border-bottom: 1px solid rgba(0,0,0,.07);
+  z-index: 900;
+}
+
+.logo {
+  display: flex; align-items: center;
+  text-decoration: none;
+}
+.logo-img {
+  height: 28px;
+  width: auto;
+}
+
+.header-nav { display: flex; gap: 24px; }
+.header-nav a {
+  font-size: 16px; font-weight: 600; color: var(--blue);
+  text-decoration: none; transition: color .2s;
+}
+.header-nav a:hover { color: var(--light-blue); }
+
+/* Hamburger (mobile only) */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px;
+  background: var(--blue); border-radius: 2px;
+  transition: .25s ease;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+/* ============================================
+   SCREENS
+   ============================================ */
+.screen {
+  display: none;
+  min-height: 100vh;
+  width: 100%;
+  padding-top: var(--header-h);
+}
+.screen.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn .35s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================
+   START SCREEN
+   ============================================ */
+#splash-screen {
+  margin-top: -100px;
+}
+
+   .splash-content {
+  text-align: center;
+  padding: 40px 24px;
+  max-width: 700px;
+}
+
+.splash-title {
+  font-size: 3.75rem;
+  font-weight: 900;
+  color: var(--blue);
+  margin-bottom: 20px;
+  line-height: 1.15;
+}
+
+.splash-instructions {
+  font-size: 1.1rem;
+  color: var(--dark);
+  line-height: 1.65;
+  margin-bottom: 32px;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.splash-instructions strong {
+  color: var(--blue);
+}
+
+/* ============================================
+   BUTTONS (shared)
+   ============================================ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 6px;
+  border: none; border-radius: 8px;
+  font-family: inherit; font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .15s, box-shadow .2s;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.10);
+}
+.btn:active { transform: translateY(0); }
+
+/* Primary CTA (Start, Play Again) */
+.btn-primary {
+  background: var(--yellow);
+  color: var(--dark);
+  font-size: 18px;
+  padding: 18px 50px;
+}
+.btn-primary:hover { background: var(--yellow-dk); }
+
+/* Higher / Lower */
+.btn-higher,
+.btn-lower {
+  background: var(--light-blue);
+  color: var(--white);
+  font-size: 16px;
+  padding: 14px 0;
+  width: 180px;
+}
+.btn-higher:hover,
+.btn-lower:hover {
+  background: var(--blue);
+}
+
+/* Next (overlay) */
+.btn-next {
+  background: var(--yellow);
+  color: var(--dark);
+  font-size: 16px;
+  padding: 14px 36px;
+  margin-top: 16px;
+}
+.btn-next:hover { background: var(--yellow-dk); }
+
+/* Play Again */
+.btn-play-again {
+  background: var(--yellow);
+  color: var(--dark);
+  font-size: 16px;
+  padding: 16px 32px;
+  flex: 1;
+}
+.btn-play-again:hover { background: var(--yellow-dk); }
+
+/* Share (outlined) */
+.btn-share {
+  background: transparent;
+  color: var(--blue);
+  border: 2px solid var(--blue);
+  font-size: 16px;
+  padding: 14px 32px;
+  flex: 1;
+}
+.btn-share:hover {
+  background: var(--blue);
+  color: var(--white);
+}
+
+/* Subtle pulse on start btn */
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,201,7,.45); }
+  50%     { box-shadow: 0 0 0 12px rgba(255,201,7,0); }
+}
+#start-btn { animation: pulse 2.5s infinite; }
+
+/* ============================================
+   GAME TOP BAR
+   ============================================ */
+.game-topbar {
+  width: 100%;
+  height: 56px;
+  background: var(--white);
+  border-bottom: 1px solid rgba(0,0,0,.07);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: sticky;
+  top: var(--header-h);
+  z-index: 50;
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.topbar-score {
+  font-size: 15px;
+  color: var(--dark);
+  font-weight: 400;
+}
+.topbar-score strong {
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--blue);
+}
+
+.topbar-timer {
+  font-size: 15px;
+  color: var(--dark);
+  font-weight: 400;
+  background: var(--cream);
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+.topbar-timer strong {
+  font-weight: 800;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+
+.topbar-timer.warning {
+  background: #BF6C46;
+  color: var(--white);
+  animation: timerPulse .5s ease infinite;
+}
+.topbar-timer.warning strong { color: var(--white); }
+
+@keyframes timerPulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.06); }
+}
+
+/* ============================================
+   GAME AREA
+   ============================================ */
+#game-screen.active {
+  justify-content: flex-start;
+}
+
+.game-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 32px 24px 40px;
+  width: 100%;
+  max-width: 860px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+  width: 400px;
+  background: var(--white);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.07);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow .3s, border-color .3s;
+  border: 2px solid transparent;
+}
+
+/* Fact area — top ~60% */
+.card-fact {
+  padding: 24px 24px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-source {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--light-blue);
+  margin-bottom: 8px;
+}
+
+.card-fact-text {
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--dark);
+  font-weight: 500;
+}
+
+/* Number box — bottom ~40% */
+.card-number-box {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-number-box--peach {
+  background: var(--peach);
+}
+
+.card-number-box--gray {
+  background: var(--gray);
+}
+
+.card-number {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--blue);
+  line-height: 1;
+}
+
+.card-number--hidden {
+  color: var(--blue);
+  opacity: .35;
+  letter-spacing: 6px;
+}
+
+.card-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  opacity: .6;
+  margin-top: 4px;
+  text-transform: lowercase;
+}
+
+/* Reveal animation */
+.card-number.reveal {
+  animation: revealPop .45s ease forwards;
+  opacity: 1 !important;
+  letter-spacing: 0 !important;
+}
+@keyframes revealPop {
+  from { transform: scale(.6); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Correct / Wrong states */
+.card.correct {
+  border-color: var(--correct);
+  box-shadow: 0 0 0 3px var(--correct);
+}
+.card.wrong {
+  border-color: var(--wrong);
+  box-shadow: 0 0 0 3px var(--wrong);
+}
+
+/* Flash animations on the number box */
+@keyframes correctFlash {
+  0%, 100% { background-color: inherit; }
+  50%      { background-color: #90EE90; }
+}
+@keyframes wrongFlash {
+  0%, 100% { background-color: inherit; }
+  50%      { background-color: #FFB6C1; }
+}
+
+.card.correct .card-number-box {
+  animation: correctFlash .5s ease;
+}
+.card.wrong .card-number-box {
+  animation: wrongFlash .5s ease;
+}
+
+/* Card entrance animation */
+.card.card-enter {
+  animation: cardSlideIn .35s ease forwards;
+}
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── VS BADGE ─────────────────────────────── */
+.vs-badge {
+  width: 44px; height: 44px;
+  background: var(--yellow);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--blue);
+  margin: -12px 0;
+  z-index: 5;
+  box-shadow: 0 3px 10px rgba(255,201,7,.35);
+  border: 3px solid var(--cream);
+  flex-shrink: 0;
+}
+
+/* ─── GUESS BUTTONS ────────────────────────── */
+.guess-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 28px;
+  justify-content: center;
+}
+
+/* ============================================
+   RESULT FEEDBACK OVERLAY
+   ============================================ */
+.result-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 800;
+  padding: 24px;
+  animation: fadeIn .2s ease;
+}
+.result-overlay.hidden { display: none; }
+
+.result-card {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 40px 32px;
+  max-width: 420px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 12px 40px rgba(0,0,0,.18);
+}
+
+.result-icon { font-size: 48px; margin-bottom: 8px; }
+
+.result-text {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 12px;
+}
+
+.result-fun-fact {
+  font-size: 15px;
+  color: var(--light-blue);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+
+/* ============================================
+   GAME OVER SCREEN
+   ============================================ */
+#results-screen.active {
+  justify-content: flex-start;
+  padding-top: calc(var(--header-h) + 32px);
+}
+
+.gameover-content {
+  text-align: center;
+  padding: 24px;
+  max-width: 700px;
+  width: 100%;
+}
+
+.gameover-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--wrong);
+  margin-bottom: 6px;
+}
+
+.gameover-title {
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--blue);
+  margin-bottom: 24px;
+}
+
+/* NEW RECORD banner */
+.new-record {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 8px 24px;
+  border-radius: 50px;
+  margin-bottom: 16px;
+  animation: recordBounce .6s ease;
+}
+@keyframes recordBounce {
+  0%   { transform: scale(0); opacity: 0; }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+.new-record.hidden { display: none; }
+
+/* Score boxes */
+.gameover-scores {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.gameover-score-box {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px 32px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.06);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 140px;
+}
+
+.gameover-score-caption {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--light-blue);
+  margin-bottom: 6px;
+}
+
+.gameover-score-num {
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--blue);
+}
+
+/* Impact fact card */
+.impact-fact {
+  background: var(--peach);
+  border-radius: 12px;
+  padding: 28px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.impact-stat {
+  display: block;
+  font-size: 48px;
+  font-weight: 900;
+  color: var(--blue);
+  margin-bottom: 10px;
+  line-height: 1.1;
+}
+
+.impact-text {
+  font-size: 15px;
+  color: var(--dark);
+  line-height: 1.6;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Action buttons */
+.gameover-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+/* Learn more */
+.learn-more-link {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--brown);
+  text-decoration: none;
+  padding: 6px 2px;
+  border-bottom: 2px dashed var(--yellow);
+  transition: color .2s;
+}
+.learn-more-link:hover { color: var(--blue); }
+
+/* ============================================
+   RESPONSIVE — MOBILE (≤ 768px)
+   ============================================ */
+@media (max-width: 768px) {
+
+  /* Header */
+  .header-nav {
+    display: none;
+    position: absolute;
+    top: var(--header-h);
+    left: 0; right: 0;
+    background: var(--white);
+    flex-direction: column;
+    padding: 16px 24px;
+    gap: 12px;
+    border-bottom: 1px solid rgba(0,0,0,.07);
+    box-shadow: 0 8px 20px rgba(0,0,0,.06);
+  }
+  .header-nav.open { display: flex; }
+  .hamburger { display: flex; }
+
+  /* Start screen */
+  .splash-title { font-size: 32px; }
+  .splash-instructions { font-size: 15px; }
+
+  /* Top bar */
+  .game-topbar { height: 48px; padding: 0 16px; }
+  .topbar-title { font-size: 15px; }
+  .topbar-score, .topbar-timer { font-size: 13px; }
+  .topbar-score strong, .topbar-timer strong { font-size: 15px; }
+  .topbar-right { gap: 12px; }
+
+  /* Cards */
+  .card {
+    width: 90vw;
+    max-width: 100%;
+  }
+
+  .card-fact { padding: 20px 20px 12px; }
+  .card-fact-text { font-size: 16px; }
+  .card-number { font-size: 42px; }
+  .card-number-box { padding: 16px 20px; }
+
+  /* Buttons stack vertically */
+  .guess-buttons {
+    flex-direction: column;
+    width: 90vw;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .btn-higher,
+  .btn-lower {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  /* Game over */
+  .gameover-title { font-size: 28px; }
+  .gameover-scores { flex-direction: row; gap: 10px; }
+  .gameover-score-box { padding: 16px 20px; min-width: 0; flex: 1; }
+  .gameover-score-num { font-size: 26px; }
+  .impact-stat { font-size: 36px; }
+  .impact-fact { padding: 20px; }
+
+  .gameover-actions {
+    flex-direction: column;
+  }
+  .btn-play-again,
+  .btn-share {
+    width: 100%;
+  }
+
+  .gameover-content { padding: 20px 16px; }
+
+  #results-screen.active {
+    padding-top: calc(var(--header-h) + 16px);
+  }
+}
+
+/* ============================================
+   DISABLED BUTTON STATES
+   ============================================ */
+.btn:disabled,
+.btn[disabled] {
+  opacity: .45;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ============================================
+   TOUCH / ACTIVE FEEDBACK
+   ============================================ */
+.btn:active:not(:disabled) {
+  transform: scale(.97);
+}
+
+@media (hover: none) {
+  .btn:hover { transform: none; box-shadow: none; }
+  .btn:active:not(:disabled) {
+    transform: scale(.95);
+    box-shadow: 0 2px 8px rgba(0,0,0,.10);
+  }
+}
+
+/* ============================================
+   TOAST NOTIFICATION
+   ============================================ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--blue);
+  color: var(--white);
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  animation: toastIn .3s ease forwards;
+}
+.toast.toast-out {
+  animation: toastOut .3s ease forwards;
+}
+@keyframes toastIn {
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(20px); }
+}
+
+/* ============================================
+   SCREEN TRANSITIONS
+   ============================================ */
+.screen {
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.screen.active {
+  opacity: 1;
+}
+
+/* ============================================
+   UTILITY
+   ============================================ */
+.hidden { display: none !important; }

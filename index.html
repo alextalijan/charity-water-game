@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>charity: water — Higher or Lower?</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ========== PERSISTENT HEADER ========== -->
+  <header class="site-header">
+    <div class="header-left">
+      <a href="https://www.charitywater.org" class="logo" id="logo-link">
+        <img src="charity-water-logo.svg" alt="charity: water" class="logo-img">
+      </a>
+    </div>
+    <nav class="header-nav" id="header-nav">
+      <a href="https://www.charitywater.org/global-water-crisis" target="_blank">OUR MISSION</a>
+      <a href="https://www.charitywater.org/donate" target="_blank">DONATE</a>
+      <a href="https://www.charitywater.org/about" target="_blank">ABOUT</a>
+    </nav>
+    <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- ========== START SCREEN ========== -->
+  <section id="splash-screen" class="screen active" role="main" aria-label="Start screen">
+    <div class="splash-content">
+      <h1 class="splash-title">Water Usage<br/>Higher / Lower Game</h1>
+      <p class="splash-instructions">Compare water usage facts. Guess if the hidden number is <strong>HIGHER</strong> or <strong>LOWER</strong> than the shown number. One wrong guess = game over!</p>
+      <button id="start-btn" class="btn btn-primary">START GAME</button>
+    </div>
+  </section>
+
+  <!-- ========== GAME SCREEN ========== -->
+  <section id="game-screen" class="screen" role="main" aria-label="Game screen">
+
+    <!-- Top bar -->
+    <div class="game-topbar">
+      <div class="topbar-left">
+        <span class="topbar-title">Water Usage Higher / Lower Game</span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-score">SCORE: <strong id="score" aria-live="polite" aria-atomic="true">0</strong></span>
+        <span class="topbar-timer" id="timer-pill">⏱ <strong id="timer" aria-live="off" aria-atomic="true">10</strong></span>
+      </div>
+    </div>
+
+    <!-- Card area -->
+    <div class="game-area">
+
+      <!-- Top card (reference) -->
+      <div class="card" id="card-left">
+        <div class="card-fact">
+          <span class="card-source" id="left-category"></span>
+          <p class="card-fact-text" id="left-label"></p>
+        </div>
+        <div class="card-number-box card-number-box--peach">
+          <span class="card-number" id="left-number"></span>
+          <span class="card-unit" id="left-unit"></span>
+        </div>
+      </div>
+
+      <!-- VS indicator -->
+      <div class="vs-badge">VS</div>
+
+      <!-- Bottom card (guess) -->
+      <div class="card" id="card-right">
+        <div class="card-fact">
+          <span class="card-source" id="right-category"></span>
+          <p class="card-fact-text" id="right-label"></p>
+        </div>
+        <div class="card-number-box card-number-box--gray">
+          <span class="card-number card-number--hidden" id="right-number">???</span>
+          <span class="card-unit" id="right-unit"></span>
+        </div>
+      </div>
+
+      <!-- Guess buttons -->
+      <div class="guess-buttons" id="guess-buttons">
+        <button class="btn btn-higher" id="btn-higher">⬆️ HIGHER</button>
+        <button class="btn btn-lower" id="btn-lower">⬇️ LOWER</button>
+      </div>
+    </div>
+
+    <!-- Result feedback overlay -->
+    <div class="result-overlay hidden" id="result-feedback" role="dialog" aria-modal="true" aria-label="Round result">
+      <div class="result-card">
+        <div class="result-icon" id="result-icon"></div>
+        <div class="result-text" id="result-text"></div>
+        <p class="result-fun-fact" id="fun-fact"></p>
+        <button class="btn btn-next" id="btn-next">Next →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== GAME OVER SCREEN ========== -->
+  <section id="results-screen" class="screen" role="main" aria-label="Game over screen">
+    <div class="gameover-content">
+      <span class="gameover-label">GAME OVER</span>
+      <h2 class="gameover-title">Water Higher/Lower</h2>
+
+      <!-- NEW RECORD banner (hidden by default) -->
+      <div class="new-record hidden" id="new-record">
+        🏆 NEW RECORD!
+      </div>
+
+      <div class="gameover-scores">
+        <div class="gameover-score-box">
+          <span class="gameover-score-caption">YOUR SCORE</span>
+          <span class="gameover-score-num" id="final-score">0</span>
+        </div>
+        <div class="gameover-score-box">
+          <span class="gameover-score-caption">BEST SCORE</span>
+          <span class="gameover-score-num" id="final-high-score">0</span>
+        </div>
+      </div>
+
+      <!-- Impact fact -->
+      <div class="impact-fact" id="awareness-fact">
+        <span class="impact-stat" id="awareness-stat">703 million</span>
+        <p class="impact-text" id="awareness-text">people worldwide don't have access to clean water close to home. That's nearly 1 in 10 people on the planet.</p>
+      </div>
+
+      <div class="gameover-actions">
+        <button class="btn btn-play-again" id="play-again-btn">🔄 PLAY AGAIN</button>
+        <button class="btn btn-share" id="share-btn">📤 SHARE YOUR SCORE</button>
+      </div>
+
+      <a href="https://www.charitywater.org/global-water-crisis" target="_blank" class="learn-more-link">Learn more →</a>
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
