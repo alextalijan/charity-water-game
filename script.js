@@ -4,279 +4,149 @@
    ============================================ */
 
 // ─── WATER FACTS DATA ──────────────────────────────────────────────────────────
+// Every fact is measured in GALLONS so the Higher/Lower comparison always hits.
+// 50 serious (charity: water + water crisis) + 50 casual (college-life water usage)
 const waterFacts = {
   charityWaterFacts: [
-    {
-      fact: "People served by charity: water since 2006",
-      number: 17000000,
-      display: "17 million",
-      unit: "people",
-      funFact: "charity: water has funded over 137,000 water projects in 29 countries.",
-      source: "charitywater.org"
-    },
-    {
-      fact: "Water projects funded by charity: water worldwide",
-      number: 137000,
-      display: "137,000",
-      unit: "projects",
-      funFact: "Each project serves an average of 125 people with clean drinking water.",
-      source: "charitywater.org"
-    },
-    {
-      fact: "Countries where charity: water has funded projects",
-      number: 29,
-      display: "29",
-      unit: "countries",
-      funFact: "charity: water focuses on the countries with the highest need across Africa, Asia, and Central/South America.",
-      source: "charitywater.org"
-    },
-    {
-      fact: "Cost to give one person clean water through charity: water",
-      number: 40,
-      display: "$40",
-      unit: "dollars",
-      funFact: "That's less than the cost of a pair of sneakers — but it changes a life forever.",
-      source: "charitywater.org"
-    },
-    {
-      fact: "Percentage of charity: water donations that go directly to water projects",
-      number: 100,
-      display: "100%",
-      unit: "percent",
-      funFact: "charity: water covers operating costs through a separate group of donors called The Well.",
-      source: "charitywater.org"
-    },
-    {
-      fact: "Remote sensors deployed by charity: water to monitor water flow",
-      number: 130000,
-      display: "130,000",
-      unit: "sensors",
-      funFact: "These sensors transmit real-time data via satellite so communities always have working water.",
-      source: "charitywater.org"
-    },
-    {
-      fact: "People who gain access to clean water through a single well in rural Africa",
-      number: 250,
-      display: "250",
-      unit: "people per well",
-      funFact: "A single well can transform an entire village — kids go to school, parents grow businesses.",
-      source: "charitywater.org"
-    },
-    {
-      fact: "Lifespan in years of a charity: water-funded well",
-      number: 20,
-      display: "20",
-      unit: "years",
-      funFact: "charity: water partners with local organizations to maintain wells long after they're built.",
-      source: "charitywater.org"
-    }
+    { fact: "Minimum water to survive one day", number: 0.5, unit: "gallons" },
+    { fact: "Water one person rehydrates with to recover from illness", number: 1, unit: "gallons" },
+    { fact: "Water a mom in South Sudan boils daily to make it safer for her kids", number: 2, unit: "gallons" },
+    { fact: "All the water a family in Mozambique uses in one day", number: 2.6, unit: "gallons" },
+    { fact: "All the water one person in Ethiopia gets for a whole day", number: 3, unit: "gallons" },
+    { fact: "Water one Jerry can hold — a rural family's whole trip", number: 5, unit: "gallons" },
+    { fact: "Water a kid in Madagascar carries home on their head daily", number: 5, unit: "gallons" },
+    { fact: "Water a girl in Kenya saves each day once a well is built", number: 5, unit: "gallons" },
+    { fact: "Water a woman in Haiti walks 3 hours to collect", number: 5, unit: "gallons" },
+    { fact: "Water allowed per person during Cape Town's Day Zero crisis", number: 6.6, unit: "gallons" },
+    { fact: "Water a family in Bangladesh carries from a dirty pond daily", number: 7, unit: "gallons" },
+    { fact: "Water one family in India uses for everything in a day", number: 8, unit: "gallons" },
+    { fact: "Water a school hand-washing station uses per day", number: 10, unit: "gallons" },
+    { fact: "WHO recommended water per person per day", number: 13, unit: "gallons" },
+    { fact: "Water one biosand filter cleans daily — no electricity needed", number: 15, unit: "gallons" },
+    { fact: "Water an American uses in a 6-min shower — more than some families get all day", number: 15, unit: "gallons" },
+    { fact: "Water lost daily from an uncovered village water tank", number: 15, unit: "gallons" },
+    { fact: "Water one hand-dug well pumps per hour", number: 15, unit: "gallons" },
+    { fact: "Water saved daily when a well replaces a long walk to a river", number: 20, unit: "gallons" },
+    { fact: "Water one person in sub-Saharan Africa uses in a whole week", number: 25, unit: "gallons" },
+    { fact: "Water a school needs just for hand-washing each day", number: 25, unit: "gallons" },
+    { fact: "Water a refugee gets for one whole week", number: 28, unit: "gallons" },
+    { fact: "Water a family saves per week when they don't walk 5 miles to a river", number: 35, unit: "gallons" },
+    { fact: "Water 200 students drink during one school day", number: 50, unit: "gallons" },
+    { fact: "Water a spring protection captures per hour", number: 50, unit: "gallons" },
+    { fact: "Water a small farmer needs daily to keep crops alive", number: 50, unit: "gallons" },
+    { fact: "Water a rope pump delivers per hour", number: 60, unit: "gallons" },
+    { fact: "Water a community tap delivers per hour after install", number: 80, unit: "gallons" },
+    { fact: "Water a rural health clinic needs daily to stay open", number: 130, unit: "gallons" },
+    { fact: "Water drip irrigation saves a small farm vs flooding the field", number: 200, unit: "gallons" },
+    { fact: "Water a solar-powered pump delivers to a school each day", number: 300, unit: "gallons" },
+    { fact: "Water one charity: water well pumps for a village daily", number: 350, unit: "gallons" },
+    { fact: "Water one charity: water sensor tracks flowing through a well each day", number: 350, unit: "gallons" },
+    { fact: "Water an entire school in Cambodia gets per day from a new well", number: 500, unit: "gallons" },
+    { fact: "Water a solar desalination unit makes from saltwater daily", number: 600, unit: "gallons" },
+    { fact: "Water a restored spring delivers daily", number: 700, unit: "gallons" },
+    { fact: "Water a protected spring gives a community for free, every day", number: 700, unit: "gallons" },
+    { fact: "Water a hospital in rural Ethiopia needs daily but often can't get", number: 1500, unit: "gallons" },
+    { fact: "Water a village of 250 people uses daily once they have a well", number: 2000, unit: "gallons" },
+    { fact: "Water a piped gravity system delivers to a community daily", number: 2500, unit: "gallons" },
+    { fact: "Water that $40 to charity: water gives one person in a year", number: 4745, unit: "gallons" },
+    { fact: "Water one rainwater tank collects in a rainy season", number: 5000, unit: "gallons" },
+    { fact: "Water lost when a community's only well breaks for a month", number: 10500, unit: "gallons" },
+    { fact: "Water one gravity-fed system delivers to 10 villages per day", number: 25000, unit: "gallons" },
+    { fact: "Water one well has delivered over 10 years", number: 1277500, unit: "gallons" },
+    { fact: "Water one borehole delivers in its 20-year lifespan", number: 2555000, unit: "gallons" },
+    { fact: "Water charity: water has delivered worldwide since 2006", number: 5000000000, unit: "gallons" },
+    { fact: "Water a broken pump delivers — literally nothing", number: 0, unit: "gallons" },
+    { fact: "Water a composting toilet uses per flush — literally zero", number: 0, unit: "gallons" },
+    { fact: "Water spilled per mile when girls carry buckets home", number: 0.5, unit: "gallons" }
   ],
 
   casualFacts: [
-    {
-      fact: "Gallons of water used in an average American shower",
-      number: 17,
-      display: "17",
-      unit: "gallons",
-      funFact: "Cutting your shower by just 2 minutes saves about 5 gallons of water.",
-      source: "EPA"
-    },
-    {
-      fact: "Gallons of water needed to produce a single hamburger",
-      number: 660,
-      display: "660",
-      unit: "gallons",
-      funFact: "That's mostly from growing the grain to feed the cattle. Wild, right?",
-      source: "USGS"
-    },
-    {
-      fact: "Gallons of water an average American uses per day",
-      number: 82,
-      display: "82",
-      unit: "gallons/day",
-      funFact: "In parts of sub-Saharan Africa, people use as little as 2-5 gallons per day.",
-      source: "USGS"
-    },
-    {
-      fact: "Gallons of water needed to produce one pair of jeans",
-      number: 1800,
-      display: "1,800",
-      unit: "gallons",
-      funFact: "Fast fashion is one of the most water-intensive industries on the planet.",
-      source: "World Wildlife Fund"
-    },
-    {
-      fact: "Gallons of water needed to produce a single cotton t-shirt",
-      number: 700,
-      display: "700",
-      unit: "gallons",
-      funFact: "Think about that the next time you're scrolling through a clothing haul on TikTok.",
-      source: "World Wildlife Fund"
-    },
-    {
-      fact: "People worldwide without access to clean water (in millions)",
-      number: 703,
-      display: "703",
-      unit: "million people",
-      funFact: "That's roughly twice the entire population of the United States.",
-      source: "WHO/UNICEF 2023"
-    },
-    {
-      fact: "Hours women and girls spend collecting water globally each day (combined)",
-      number: 200000000,
-      display: "200 million",
-      unit: "hours/day",
-      funFact: "That's time that could be spent in school, at work, or just being a kid.",
-      source: "UNICEF"
-    },
-    {
-      fact: "Children who die every day from waterborne diseases",
-      number: 1000,
-      display: "1,000",
-      unit: "children/day",
-      funFact: "Most of these deaths are preventable with access to clean water and basic sanitation.",
-      source: "WHO"
-    },
-    {
-      fact: "Percentage of the Earth's water that is freshwater",
-      number: 3,
-      display: "3%",
-      unit: "percent",
-      funFact: "And most of that freshwater is locked in glaciers and ice caps. Only ~1% is accessible.",
-      source: "USGS"
-    },
-    {
-      fact: "Gallons of water a leaky faucet wastes per year",
-      number: 3000,
-      display: "3,000",
-      unit: "gallons/year",
-      funFact: "That's enough to take 180 showers. Fix that drip!",
-      source: "EPA"
-    },
-    {
-      fact: "Gallons of water used to produce 1 pound of chocolate",
-      number: 3170,
-      display: "3,170",
-      unit: "gallons",
-      funFact: "Your Valentine's Day box of chocolates has a hidden water footprint.",
-      source: "Water Footprint Network"
-    },
-    {
-      fact: "Gallons of water used to produce a single almond",
-      number: 1,
-      display: "1.1",
-      unit: "gallons per almond",
-      funFact: "California produces 80% of the world's almonds — in one of the driest states.",
-      source: "UC Davis"
-    },
-    {
-      fact: "Gallons of water needed to produce one avocado",
-      number: 60,
-      display: "60",
-      unit: "gallons",
-      funFact: "Still worth it for the guac though, right? (But think about it.)",
-      source: "Water Footprint Network"
-    },
-    {
-      fact: "Miles the average woman in Africa walks to collect water",
-      number: 4,
-      display: "3.7",
-      unit: "miles round trip",
-      funFact: "Imagine walking almost 4 miles before your day even starts. Every single day.",
-      source: "The Water Project"
-    },
-    {
-      fact: "Gallons of water used to produce one egg",
-      number: 53,
-      display: "53",
-      unit: "gallons",
-      funFact: "Water goes into growing the chicken's feed, keeping it hydrated, and processing.",
-      source: "Water Footprint Network"
-    },
-    {
-      fact: "Gallons of water used to produce one glass of milk",
-      number: 30,
-      display: "30",
-      unit: "gallons",
-      funFact: "Oat milk uses significantly less water — about 12 gallons per glass.",
-      source: "Water Footprint Network"
-    },
-    {
-      fact: "Percentage of the world's population facing water scarcity at least one month per year",
-      number: 66,
-      display: "66%",
-      unit: "percent",
-      funFact: "Two-thirds of the planet. Water scarcity isn't a distant problem — it's everyone's problem.",
-      source: "UN Water"
-    },
-    {
-      fact: "Gallons of water needed to produce a cup of coffee",
-      number: 37,
-      display: "37",
-      unit: "gallons",
-      funFact: "Your morning latte has a bigger footprint than you'd think.",
-      source: "Water Footprint Network"
-    },
-    {
-      fact: "Gallons of water used by a running toilet per day",
-      number: 200,
-      display: "200",
-      unit: "gallons/day",
-      funFact: "A silent toilet leak can waste 200 gallons a day without you even noticing.",
-      source: "EPA"
-    },
-    {
-      fact: "Gallons of water needed to produce one slice of bread",
-      number: 11,
-      display: "11",
-      unit: "gallons",
-      funFact: "A whole loaf? About 240 gallons. Sandwich, anyone?",
-      source: "Water Footprint Network"
-    },
-    {
-      fact: "Percentage of hospital beds in developing countries occupied by water-related illness patients",
-      number: 50,
-      display: "50%",
-      unit: "percent",
-      funFact: "Clean water doesn't just quench thirst — it's literally medicine.",
-      source: "WHO"
-    }
+    { fact: "Growing one almond", number: 1.1, unit: "gallons" },
+    { fact: "One flush of the dorm toilet", number: 1.6, unit: "gallons" },
+    { fact: "Brushing teeth with the tap running", number: 4, unit: "gallons" },
+    { fact: "Running the dishwasher once", number: 6, unit: "gallons" },
+    { fact: "Making one slice of bread", number: 11, unit: "gallons" },
+    { fact: "Growing one bag of chips worth of potatoes", number: 12, unit: "gallons" },
+    { fact: "A quick 5-min shower before your 8am", number: 12.5, unit: "gallons" },
+    { fact: "Growing one orange", number: 13, unit: "gallons" },
+    { fact: "Growing one apple", number: 18, unit: "gallons" },
+    { fact: "Growing one banana", number: 18, unit: "gallons" },
+    { fact: "Brewing one pint of beer", number: 20, unit: "gallons" },
+    { fact: "Hand-washing dishes after cooking", number: 20, unit: "gallons" },
+    { fact: "One gym shower after a workout", number: 20, unit: "gallons" },
+    { fact: "A 10-min 'thinking about life' shower", number: 25, unit: "gallons" },
+    { fact: "Making one glass of milk", number: 30, unit: "gallons" },
+    { fact: "Making one glass of wine", number: 32, unit: "gallons" },
+    { fact: "Making one bagel", number: 36, unit: "gallons" },
+    { fact: "Filling a bathtub for self-care night", number: 36, unit: "gallons" },
+    { fact: "Growing & brewing one cup of coffee", number: 37, unit: "gallons" },
+    { fact: "Making one roll of toilet paper", number: 37, unit: "gallons" },
+    { fact: "One load of laundry", number: 40, unit: "gallons" },
+    { fact: "Making one late-night pizza slice", number: 42, unit: "gallons" },
+    { fact: "Making one scoop of ice cream", number: 42, unit: "gallons" },
+    { fact: "Making one burrito bowl's worth of beans", number: 43, unit: "gallons" },
+    { fact: "Making one glass of OJ", number: 45, unit: "gallons" },
+    { fact: "Growing the sugarcane in one soda can", number: 46, unit: "gallons" },
+    { fact: "Producing one egg", number: 53, unit: "gallons" },
+    { fact: "Growing one avocado", number: 60, unit: "gallons" },
+    { fact: "Washing a car by hand", number: 80, unit: "gallons" },
+    { fact: "Water the average American uses per day", number: 82, unit: "gallons" },
+    { fact: "Making one textbook", number: 95, unit: "gallons" },
+    { fact: "Making one disposable diaper", number: 144, unit: "gallons" },
+    { fact: "A running toilet wastes this much every day", number: 200, unit: "gallons" },
+    { fact: "Making one chocolate bar", number: 450, unit: "gallons" },
+    { fact: "Growing one pound of rice", number: 449, unit: "gallons" },
+    { fact: "Making one pound of chicken", number: 518, unit: "gallons" },
+    { fact: "Making one car tire", number: 518, unit: "gallons" },
+    { fact: "Making one pound of pork", number: 576, unit: "gallons" },
+    { fact: "Making one hamburger", number: 660, unit: "gallons" },
+    { fact: "Making one cotton t-shirt", number: 700, unit: "gallons" },
+    { fact: "Sprinklers running one hour on the quad", number: 1020, unit: "gallons" },
+    { fact: "Topping off the campus pool for a week", number: 1000, unit: "gallons" },
+    { fact: "Making one pair of jeans", number: 1800, unit: "gallons" },
+    { fact: "Growing one pound of almonds", number: 1929, unit: "gallons" },
+    { fact: "Making one pair of leather shoes", number: 2113, unit: "gallons" },
+    { fact: "Making one bedsheet set", number: 2839, unit: "gallons" },
+    { fact: "A leaky faucet dripping for one year", number: 3000, unit: "gallons" },
+    { fact: "Making one pound of chocolate", number: 3170, unit: "gallons" },
+    { fact: "Making one smartphone", number: 3190, unit: "gallons" },
+    { fact: "Making one laptop", number: 4679, unit: "gallons" }
   ]
 };
 
 // ─── IMPACT FACTS (shown on game-over screen) ─────────────────────────────────
 const impactFacts = [
   {
-    stat: "703 million",
-    text: "people worldwide don't have access to clean water close to home. That's nearly 1 in 10 people on the planet."
-  },
-  {
-    stat: "200 million",
-    text: "hours are spent every day by women and girls just collecting water. Time that could be spent in school or at work."
+    stat: "17 million",
+    text: "people now have clean water thanks to charity: water donors since 2006. That's a whole lot of wins."
   },
   {
     stat: "$40",
-    text: "can give one person access to clean water through charity: water. Less than your monthly streaming subscriptions."
+    text: "can give one person clean water for life through charity: water. That's less than your monthly streaming subs."
   },
   {
-    stat: "1,000",
-    text: "children die every single day from unsafe water and poor sanitation. Most of these deaths are preventable."
-  },
-  {
-    stat: "17 million",
-    text: "people have been served with clean water thanks to charity: water donors since 2006."
-  },
-  {
-    stat: "50%",
-    text: "of hospital beds in the developing world are filled with patients suffering from water-related diseases."
-  },
-  {
-    stat: "3.7 miles",
-    text: "is the average distance women and girls in Africa walk every day just to get water for their families."
+    stat: "137,000+",
+    text: "water projects funded by charity: water across 29 countries — and every single one is tracked with real data."
   },
   {
     stat: "100%",
-    text: "of public donations to charity: water go directly to funding clean water projects. Every cent."
+    text: "of public donations to charity: water go straight to funding clean water projects. Every cent. No exceptions."
+  },
+  {
+    stat: "350 gallons",
+    text: "of clean water pumped daily from a single charity: water well — enough to change a whole village's day."
+  },
+  {
+    stat: "130,000",
+    text: "remote sensors are monitoring water flow in real time right now so communities always have working water."
+  },
+  {
+    stat: "3 gallons",
+    text: "is what some families get for an entire day — drinking, cooking, cleaning, everything. Your shower alone uses 25."
+  },
+  {
+    stat: "250 people",
+    text: "can be served by one single well. That's your whole lecture hall — with clean water, for years."
   }
 ];
 
@@ -302,13 +172,11 @@ const dom = {
   timerPill:      $('#timer-pill'),
 
   // Left card (reference)
-  leftCategory:   $('#left-category'),
   leftLabel:      $('#left-label'),
   leftNumber:     $('#left-number'),
   leftUnit:       $('#left-unit'),
 
   // Right card (guess)
-  rightCategory:  $('#right-category'),
   rightLabel:     $('#right-label'),
   rightNumber:    $('#right-number'),
   rightUnit:      $('#right-unit'),
@@ -321,13 +189,6 @@ const dom = {
   guessButtons:   $('#guess-buttons'),
   btnHigher:      $('#btn-higher'),
   btnLower:       $('#btn-lower'),
-
-  // Result feedback overlay
-  resultFeedback: $('#result-feedback'),
-  resultIcon:     $('#result-icon'),
-  resultText:     $('#result-text'),
-  funFact:        $('#fun-fact'),
-  btnNext:        $('#btn-next'),
 
   // Results / game-over
   finalScore:     $('#final-score'),
@@ -345,7 +206,7 @@ let bestScore = parseInt(localStorage.getItem('waterHL_bestScore')) || 0;
 let factsPool = [];
 let topCardFact = null;
 let bottomCardFact = null;
-let timeLeft = 10;
+let timeLeft = 20;
 let timerInterval = null;
 let isGuessing = false; // locks input while revealing
 
@@ -380,7 +241,9 @@ function shuffle(arr) {
 }
 
 function formatNumber(n) {
+  if (n >= 1_000_000_000) return (n / 1_000_000_000).toFixed(n % 1_000_000_000 === 0 ? 0 : 1) + ' billion';
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1) + ' million';
+  if (n % 1 !== 0) return n.toString();
   return n.toLocaleString();
 }
 
@@ -412,13 +275,11 @@ function loadCards() {
   dom.rightNumber.textContent = '???';
 
   // Populate left (reference) card
-  dom.leftCategory.textContent = topCardFact.source || 'Water Fact';
   dom.leftLabel.textContent = topCardFact.fact;
-  dom.leftNumber.textContent = topCardFact.display;
+  dom.leftNumber.textContent = formatNumber(topCardFact.number);
   dom.leftUnit.textContent = topCardFact.unit || '';
 
   // Populate right (guess) card
-  dom.rightCategory.textContent = bottomCardFact.source || 'Water Fact';
   dom.rightLabel.textContent = bottomCardFact.fact;
   dom.rightUnit.textContent = bottomCardFact.unit || '';
 
@@ -439,7 +300,7 @@ function loadCards() {
 
 // ─── TIMER ─────────────────────────────────────────────────────────────────────
 function startTimer() {
-  timeLeft = 10;
+  timeLeft = 20;
   updateTimerDisplay();
 
   clearInterval(timerInterval);
@@ -492,7 +353,7 @@ function handleGuess(guessedHigher) {
   // Step 1: Reveal the number with animation
   dom.rightNumber.classList.remove('card-number--hidden');
   dom.rightNumber.classList.add('reveal');
-  dom.rightNumber.textContent = bottomCardFact.display;
+  dom.rightNumber.textContent = formatNumber(bottomCardFact.number);
 
   // Step 2: After a beat, flash the card green/red
   setTimeout(() => {
@@ -504,36 +365,15 @@ function handleGuess(guessedHigher) {
       dom.cardRight.classList.add('wrong');
     }
 
-    // Step 3: After flash settles, show the overlay with fun fact
+    // Step 3: After flash settles, advance or end game
     setTimeout(() => {
-      showResultFeedback(correct, bottomCardFact.funFact);
+      if (correct) {
+        advanceCards();
+      } else {
+        endGame();
+      }
     }, 600);
   }, 400);
-}
-
-// ─── RESULT FEEDBACK OVERLAY ───────────────────────────────────────────────────
-function showResultFeedback(correct, funFactText) {
-  dom.resultFeedback.classList.remove('hidden');
-
-  if (correct) {
-    dom.resultIcon.textContent = '✅';
-    dom.resultText.textContent = getCorrectMessage();
-    dom.btnNext.textContent = 'Next →';
-    dom.btnNext.onclick = () => {
-      dom.resultFeedback.classList.add('hidden');
-      advanceCards();
-    };
-  } else {
-    dom.resultIcon.textContent = '❌';
-    dom.resultText.textContent = getWrongMessage();
-    dom.btnNext.textContent = 'See Results';
-    dom.btnNext.onclick = () => {
-      dom.resultFeedback.classList.add('hidden');
-      endGame();
-    };
-  }
-
-  dom.funFact.textContent = funFactText || '';
 }
 
 function getCorrectMessage() {
@@ -574,8 +414,6 @@ function startGame() {
   // Reset state
   currentScore = 0;
   dom.scoreEl.textContent = '0';
-  dom.resultFeedback.classList.add('hidden');
-
   // Build pool & pick first two facts
   buildFactsPool();
   topCardFact = getRandomFact();
@@ -675,12 +513,6 @@ dom.shareBtn.addEventListener('click', shareScore);
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-  // Handle Enter on result overlay
-  if (e.key === 'Enter' && !dom.resultFeedback.classList.contains('hidden')) {
-    dom.btnNext.click();
-    return;
-  }
-
   // Handle Enter on splash screen
   if (e.key === 'Enter' && dom.splashScreen.classList.contains('active')) {
     dom.startBtn.click();

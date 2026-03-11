@@ -163,27 +163,32 @@ body {
 /* Higher / Lower */
 .btn-higher,
 .btn-lower {
+  background: transparent;
+  color: var(--light-blue);
+  border: 2px solid var(--light-blue);
+  font-size: 15px;
+  padding: 12px 0;
+  flex: 1;
+}
+.btn-higher:hover {
   background: var(--light-blue);
   color: var(--white);
-  font-size: 16px;
-  padding: 14px 0;
-  width: 180px;
 }
-.btn-higher:hover,
+
+.btn-lower {
+  color: var(--brown);
+  border-color: var(--brown);
+}
 .btn-lower:hover {
-  background: var(--blue);
+  background: var(--brown);
+  color: var(--white);
 }
 
-/* Next (overlay) */
-.btn-next {
-  background: var(--yellow);
-  color: var(--dark);
-  font-size: 16px;
-  padding: 14px 36px;
-  margin-top: 16px;
+.btn-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
-.btn-next:hover { background: var(--yellow-dk); }
-
 /* Play Again */
 .btn-play-again {
   background: var(--yellow);
@@ -255,27 +260,6 @@ body {
   color: var(--blue);
 }
 
-.topbar-timer {
-  font-size: 15px;
-  color: var(--dark);
-  font-weight: 400;
-  background: var(--cream);
-  padding: 4px 12px;
-  border-radius: 6px;
-}
-.topbar-timer strong {
-  font-weight: 800;
-  font-size: 18px;
-  font-variant-numeric: tabular-nums;
-}
-
-.topbar-timer.warning {
-  background: #BF6C46;
-  color: var(--white);
-  animation: timerPulse .5s ease infinite;
-}
-.topbar-timer.warning strong { color: var(--white); }
-
 @keyframes timerPulse {
   0%,100% { transform: scale(1); }
   50%     { transform: scale(1.06); }
@@ -290,23 +274,25 @@ body {
 
 .game-area {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  padding: 32px 24px 40px;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 24px;
+  padding: 120px 32px 56px;
   width: 100%;
-  max-width: 860px;
+  max-width: 1080px;
   margin: 0 auto;
   position: relative;
+  justify-content: center;
 }
 
 /* ============================================
    CARDS
    ============================================ */
 .card {
-  width: 400px;
+  flex: 1;
+  max-width: 460px;
   background: var(--white);
-  border-radius: 12px;
+  border-radius: 14px;
   box-shadow: 0 4px 20px rgba(0,0,0,.07);
   overflow: hidden;
   display: flex;
@@ -317,49 +303,33 @@ body {
 
 /* Fact area — top ~60% */
 .card-fact {
-  padding: 24px 24px 16px;
+  padding: 32px 28px 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-}
-
-.card-source {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--light-blue);
-  margin-bottom: 8px;
+  justify-content: flex-start;
 }
 
 .card-fact-text {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.5;
   color: var(--dark);
   font-weight: 500;
 }
 
-/* Number box — bottom ~40% */
+/* Number area — clean divider style */
 .card-number-box {
-  padding: 20px 24px;
+  padding: 20px 28px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.card-number-box--peach {
-  background: var(--peach);
-}
-
-.card-number-box--gray {
-  background: var(--gray);
+  border-top: 1px solid rgba(0,0,0,.08);
 }
 
 .card-number {
-  font-size: 56px;
-  font-weight: 900;
+  font-size: 44px;
+  font-weight: 800;
   color: var(--blue);
   line-height: 1;
 }
@@ -371,10 +341,10 @@ body {
 }
 
 .card-unit {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--dark);
-  opacity: .6;
+  opacity: .45;
   margin-top: 4px;
   text-transform: lowercase;
 }
@@ -425,77 +395,72 @@ body {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+/* ─── VS COLUMN (badge only) ─────────────── */
+.vs-column {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: stretch;
+}
 
+/* ─── CARD TIMER (inside guess card) ──────── */
+.card-timer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  opacity: .65;
+  padding: 10px 20px 0;
+  white-space: nowrap;
+}
+.card-timer strong {
+  font-weight: 900;
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  color: var(--blue);
+}
+.card-timer.warning {
+  opacity: 1;
+  color: #BF6C46;
+  animation: timerPulse .5s ease infinite;
+}
+.card-timer.warning strong { color: #BF6C46; }
 /* ─── VS BADGE ─────────────────────────────── */
 .vs-badge {
-  width: 44px; height: 44px;
+  width: 56px; height: 56px;
   background: var(--yellow);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
   font-weight: 900;
-  font-size: 14px;
+  font-size: 18px;
   color: var(--blue);
-  margin: -12px 0;
   z-index: 5;
-  box-shadow: 0 3px 10px rgba(255,201,7,.35);
+  box-shadow: 0 3px 12px rgba(255,201,7,.4);
   border: 3px solid var(--cream);
   flex-shrink: 0;
+  align-self: center;
 }
 
-/* ─── GUESS BUTTONS ────────────────────────── */
+/* ─── GUESS BUTTONS (inside guess card) ───── */
 .guess-buttons {
   display: flex;
-  gap: 15px;
-  margin-top: 28px;
+  gap: 12px;
+  padding: 16px 20px 20px;
   justify-content: center;
 }
 
-/* ============================================
-   RESULT FEEDBACK OVERLAY
-   ============================================ */
-.result-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(5px);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 800;
-  padding: 24px;
-  animation: fadeIn .2s ease;
-}
-.result-overlay.hidden { display: none; }
 
-.result-card {
-  background: var(--white);
-  border-radius: 16px;
-  padding: 40px 32px;
-  max-width: 420px;
-  width: 100%;
-  text-align: center;
-  box-shadow: 0 12px 40px rgba(0,0,0,.18);
-}
-
-.result-icon { font-size: 48px; margin-bottom: 8px; }
-
-.result-text {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--dark);
-  margin-bottom: 12px;
-}
-
-.result-fun-fact {
-  font-size: 15px;
-  color: var(--light-blue);
-  line-height: 1.55;
-  margin-bottom: 8px;
-}
 
 /* ============================================
    GAME OVER SCREEN
    ============================================ */
 #results-screen.active {
   justify-content: flex-start;
-  padding-top: calc(var(--header-h) + 32px);
+  padding-top: calc(var(--header-h) + 86px);
 }
 
 .gameover-content {
@@ -651,33 +616,46 @@ body {
   /* Top bar */
   .game-topbar { height: 48px; padding: 0 16px; }
   .topbar-title { font-size: 15px; }
-  .topbar-score, .topbar-timer { font-size: 13px; }
-  .topbar-score strong, .topbar-timer strong { font-size: 15px; }
+  .topbar-score { font-size: 13px; }
+  .topbar-score strong { font-size: 15px; }
   .topbar-right { gap: 12px; }
+
+  /* Game area stacks vertically */
+  .game-area {
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 24px 16px 32px;
+  }
 
   /* Cards */
   .card {
     width: 90vw;
     max-width: 100%;
+    flex: none;
   }
 
   .card-fact { padding: 20px 20px 12px; }
-  .card-fact-text { font-size: 16px; }
+  .card-fact-text { font-size: 18px; }
   .card-number { font-size: 42px; }
   .card-number-box { padding: 16px 20px; }
 
-  /* Buttons stack vertically */
+  /* VS badge vertical on mobile */
+  .vs-badge {
+    margin: -12px 0;
+    align-self: center;
+  }
+
+  /* Buttons inside card */
   .guess-buttons {
-    flex-direction: column;
-    width: 90vw;
-    gap: 10px;
-    margin-top: 20px;
+    padding: 12px 16px 16px;
   }
   .btn-higher,
   .btn-lower {
     width: 100%;
-    padding: 16px;
-    font-size: 16px;
+    padding: 14px;
+    font-size: 15px;
+    flex: 1;
   }
 
   /* Game over */

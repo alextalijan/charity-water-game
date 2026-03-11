@@ -46,7 +46,6 @@
       </div>
       <div class="topbar-right">
         <span class="topbar-score">SCORE: <strong id="score" aria-live="polite" aria-atomic="true">0</strong></span>
-        <span class="topbar-timer" id="timer-pill">⏱ <strong id="timer" aria-live="off" aria-atomic="true">10</strong></span>
       </div>
     </div>
 
@@ -56,53 +55,44 @@
       <!-- Top card (reference) -->
       <div class="card" id="card-left">
         <div class="card-fact">
-          <span class="card-source" id="left-category"></span>
           <p class="card-fact-text" id="left-label"></p>
         </div>
-        <div class="card-number-box card-number-box--peach">
+        <div class="card-number-box">
           <span class="card-number" id="left-number"></span>
           <span class="card-unit" id="left-unit"></span>
         </div>
       </div>
 
       <!-- VS indicator -->
-      <div class="vs-badge">VS</div>
+      <div class="vs-column">
+        <div class="vs-badge">VS</div>
+      </div>
 
       <!-- Bottom card (guess) -->
-      <div class="card" id="card-right">
+      <div class="card card--guess" id="card-right">
         <div class="card-fact">
-          <span class="card-source" id="right-category"></span>
           <p class="card-fact-text" id="right-label"></p>
         </div>
-        <div class="card-number-box card-number-box--gray">
+        <!-- Timer + Guess buttons (inside guess card) -->
+        <span class="card-timer" id="timer-pill">⏱ <strong id="timer" aria-live="off" aria-atomic="true">20</strong></span>
+        <div class="guess-buttons" id="guess-buttons">
+          <button class="btn btn-higher" id="btn-higher"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg> HIGHER</button>
+          <button class="btn btn-lower" id="btn-lower"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg> LOWER</button>
+        </div>
+        <div class="card-number-box">
           <span class="card-number card-number--hidden" id="right-number">???</span>
           <span class="card-unit" id="right-unit"></span>
         </div>
       </div>
-
-      <!-- Guess buttons -->
-      <div class="guess-buttons" id="guess-buttons">
-        <button class="btn btn-higher" id="btn-higher">⬆️ HIGHER</button>
-        <button class="btn btn-lower" id="btn-lower">⬇️ LOWER</button>
-      </div>
     </div>
 
-    <!-- Result feedback overlay -->
-    <div class="result-overlay hidden" id="result-feedback" role="dialog" aria-modal="true" aria-label="Round result">
-      <div class="result-card">
-        <div class="result-icon" id="result-icon"></div>
-        <div class="result-text" id="result-text"></div>
-        <p class="result-fun-fact" id="fun-fact"></p>
-        <button class="btn btn-next" id="btn-next">Next →</button>
-      </div>
-    </div>
   </section>
 
   <!-- ========== GAME OVER SCREEN ========== -->
   <section id="results-screen" class="screen" role="main" aria-label="Game over screen">
     <div class="gameover-content">
       <span class="gameover-label">GAME OVER</span>
-      <h2 class="gameover-title">Water Higher/Lower</h2>
+      <h2 class="gameover-title">Water Usage Higher / Lower Game</h2>
 
       <!-- NEW RECORD banner (hidden by default) -->
       <div class="new-record hidden" id="new-record">
@@ -127,11 +117,11 @@
       </div>
 
       <div class="gameover-actions">
-        <button class="btn btn-play-again" id="play-again-btn">🔄 PLAY AGAIN</button>
-        <button class="btn btn-share" id="share-btn">📤 SHARE YOUR SCORE</button>
+        <button class="btn btn-play-again" id="play-again-btn"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> PLAY AGAIN</button>
+        <button class="btn btn-share" id="share-btn"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> SHARE YOUR SCORE</button>
       </div>
 
-      <a href="https://www.charitywater.org/global-water-crisis" target="_blank" class="learn-more-link">Learn more →</a>
+      <a href="https://www.charitywater.org/global-water-crisis" target="_blank" class="learn-more-link">Learn more how we've helped →</a>
     </div>
   </section>
 
