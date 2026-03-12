@@ -395,6 +395,32 @@ body {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+/* ─── CARD SWAP TRANSITIONS ──────────────── */
+/* Phase 1: left card + VS fade out */
+.card.fade-out, .vs-column.fade-out {
+  transition: opacity .3s ease, transform .3s ease;
+  opacity: 0;
+  transform: scale(.95);
+  pointer-events: none;
+}
+
+/* Phase 1: right card slides to left position */
+.game-area.swapping .card--guess {
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+}
+.game-area.swapping-vertical .card--guess {
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+}
+
+/* Phase 2: new right card + VS pop in */
+.card.pop-in, .vs-column.pop-in {
+  animation: popIn .3s ease forwards;
+}
+@keyframes popIn {
+  from { opacity: 0; transform: scale(.9) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
 /* ─── VS COLUMN (badge only) ─────────────── */
 .vs-column {
   display: flex;
@@ -451,6 +477,12 @@ body {
   gap: 12px;
   padding: 16px 20px 20px;
   justify-content: center;
+  transition: opacity .25s ease;
+}
+.guess-buttons.fade-out,
+.card-timer.fade-out {
+  opacity: 0;
+  pointer-events: none;
 }
 
 

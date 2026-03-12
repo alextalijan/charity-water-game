@@ -1,8 +1,3 @@
-/* ============================================
-   charity: water — Higher or Lower Game
-   Core Game Logic (script.js)
-   ============================================ */
-
 // ─── WATER FACTS DATA ──────────────────────────────────────────────────────────
 // Every fact is measured in GALLONS so the Higher/Lower comparison always hits.
 // 50 serious (charity: water + water crisis) + 50 casual (college-life water usage)
@@ -290,7 +285,8 @@ function loadCards() {
   });
 
   // Re-enable guess buttons
-  dom.guessButtons.classList.remove('hidden');
+  dom.guessButtons.classList.remove('hidden', 'fade-out');
+  dom.timerPill.classList.remove('fade-out');
   dom.btnHigher.disabled = false;
   dom.btnLower.disabled = false;
   dom.btnHigher.removeAttribute('aria-disabled');
@@ -342,6 +338,10 @@ function handleGuess(guessedHigher) {
   dom.btnHigher.setAttribute('aria-disabled', 'true');
   dom.btnLower.setAttribute('aria-disabled', 'true');
 
+  // Fade out buttons + timer
+  dom.guessButtons.classList.add('fade-out');
+  dom.timerPill.classList.add('fade-out');
+
   const topVal = topCardFact.number;
   const bottomVal = bottomCardFact.number;
 
@@ -376,37 +376,79 @@ function handleGuess(guessedHigher) {
   }, 400);
 }
 
-function getCorrectMessage() {
-  const messages = [
-    "Nailed it! 🔥",
-    "You actually knew that?!",
-    "Big brain energy 🧠",
-    "Correct! Let's keep going",
-    "Yep! You're on a roll",
-    "Facts don't lie — neither do you",
-    "Water expert in the making 💧"
-  ];
-  return messages[Math.floor(Math.random() * messages.length)];
-}
-
-function getWrongMessage() {
-  const messages = [
-    "Not quite 😬",
-    "Oof. That one got you",
-    "The water crisis hits different when you see the numbers",
-    "Tough one — the real stats are wild",
-    "So close! But nope.",
-    "These numbers are eye-opening, right?"
-  ];
-  return messages[Math.floor(Math.random() * messages.length)];
-}
-
-// ─── ADVANCE CARDS (correct answer — shift right card to left) ─────────────────
+// ─── ADVANCE CARDS (correct answer — animated shift) ───────────────────────────
 function advanceCards() {
-  topCardFact = bottomCardFact;
-  bottomCardFact = getRandomFact();
-  loadCards();
-  startTimer();
+  const gameArea = document.querySelector('.game-area');
+  const vsColumn = document.querySelector('.vs-column');
+  const isMobile = window.innerWidth <= 768;
+
+  // Measure how far the right card needs to slide to reach left card position
+  // First, clear card-enter's `forwards` fill — it overrides inline transforms
+  dom.cardLeft.classList.remove('card-enter');
+  dom.cardRight.classList.remove('card-enter');
+
+  const leftRect = dom.cardLeft.getBoundingClientRect();
+  const rightRect = dom.cardRight.getBoundingClientRect();
+  const dx = leftRect.left - rightRect.left;
+  const dy = leftRect.top - rightRect.top;
+
+  // Phase 1: fade out left card + VS, slide right card to left position
+  dom.cardLeft.classList.add('fade-out');
+  vsColumn.classList.add('fade-out');
+  gameArea.classList.add(isMobile ? 'swapping-vertical' : 'swapping');
+  dom.cardRight.style.transform = `translate(${dx}px, ${dy}px)`;
+
+  // After slide completes (~400ms)
+  setTimeout(() => {
+    // Swap data
+    topCardFact = bottomCardFact;
+    bottomCardFact = getRandomFact();
+
+    // Reset transforms and classes
+    dom.cardRight.style.transform = '';
+    dom.cardRight.style.transition = 'none';
+    gameArea.classList.remove('swapping', 'swapping-vertical');
+    dom.cardLeft.classList.remove('fade-out');
+    vsColumn.classList.remove('fade-out');
+
+    // Populate left card with what was the right card
+    dom.leftLabel.textContent = topCardFact.fact;
+    dom.leftNumber.textContent = formatNumber(topCardFact.number);
+    dom.leftUnit.textContent = topCardFact.unit || '';
+    dom.cardLeft.classList.remove('correct', 'wrong', 'card-enter', 'fade-out');
+    dom.cardLeft.style.opacity = '1';
+
+    // Populate new right card (hidden number)
+    dom.rightLabel.textContent = bottomCardFact.fact;
+    dom.rightUnit.textContent = bottomCardFact.unit || '';
+    dom.rightNumber.classList.remove('reveal');
+    dom.rightNumber.classList.add('card-number--hidden');
+    dom.rightNumber.textContent = '???';
+    dom.cardRight.classList.remove('correct', 'wrong', 'card-enter');
+
+    // Force reflow then pop in the new right card + VS
+    void dom.cardRight.offsetHeight;
+    dom.cardRight.style.transition = '';
+    dom.cardRight.classList.add('pop-in');
+    vsColumn.classList.add('pop-in');
+
+    // Re-enable guess buttons
+    dom.guessButtons.classList.remove('hidden', 'fade-out');
+    dom.timerPill.classList.remove('fade-out');
+    dom.btnHigher.disabled = false;
+    dom.btnLower.disabled = false;
+    dom.btnHigher.removeAttribute('aria-disabled');
+    dom.btnLower.removeAttribute('aria-disabled');
+    isGuessing = false;
+
+    // Clean up pop-in class after animation
+    setTimeout(() => {
+      dom.cardRight.classList.remove('pop-in');
+      vsColumn.classList.remove('pop-in');
+    }, 350);
+
+    startTimer();
+  }, 450);
 }
 
 // ─── START GAME ────────────────────────────────────────────────────────────────
