@@ -557,6 +557,14 @@ function shareScore() {
 
 // ─── EVENT LISTENERS ───────────────────────────────────────────────────────────
 dom.startBtn.addEventListener('click', startGame);
+
+// Topbar title → return to splash
+document.getElementById('topbar-home-btn').addEventListener('click', () => {
+  stopTimer();
+  isGuessing = false;
+  showScreen(dom.splashScreen);
+});
+
 dom.btnHigher.addEventListener('click', () => handleGuess(true));
 dom.btnLower.addEventListener('click', () => handleGuess(false));
 dom.playAgainBtn.addEventListener('click', startGame);
