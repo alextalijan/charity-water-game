@@ -206,9 +206,18 @@ let timerInterval = null;
 let isGuessing = false; // locks input while revealing
 
 // ─── SCREEN MANAGEMENT ─────────────────────────────────────────────────────────
+const dropletsEl = document.querySelector('.droplets');
+
 function showScreen(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   screen.classList.add('active');
+
+  // Hide droplets during gameplay (keep on splash & game over)
+  if (screen === dom.gameScreen) {
+    dropletsEl.style.display = 'none';
+  } else {
+    dropletsEl.style.display = '';
+  }
 }
 
 // ─── HAMBURGER MENU (mobile) ───────────────────────────────────────────────────
@@ -524,12 +533,12 @@ function showToast(message) {
 }
 
 function shareScore() {
-  const shareText = `💧 I scored ${currentScore} on charity: water Higher/Lower! Can you beat me? ${window.location.href}`;
+  const shareText = `💧 I scored ${currentScore} on H2Over/Under! Can you beat me? ${window.location.href}`;
 
   // Try native share API first (mostly mobile)
   if (navigator.share) {
     navigator.share({
-      title: 'Water Higher/Lower',
+      title: 'H2Over/Under',
       text: shareText,
       url: window.location.href
     }).catch(() => {});

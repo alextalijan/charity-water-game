@@ -1,10 +1,32 @@
 /* ============================================
-   charity: water — Higher or Lower Game
+   charity: water — H2Over/Under Game
    Full Stylesheet — matches wireframe spec
    ============================================ */
 
 /* ─── BRAND PALETTE ────────────────────────── */
+
+/* ─── WEB FONTS ────────────────────────────── */
+@font-face {
+  font-family: 'Kazimir Text';
+  src: local('Kazimir Text Regular'),
+       url('https://cdn.builder.io/o/assets%2F2fe4147bb8c843bb8ebba475c8973899%2Ff26d56fb04b648efb9acd9c7ee7c1bca?alt=media&token=ea8b4c2f-d8f5-4b5d-b348-22fc5d694470&apiKey=2fe4147bb8c843bb8ebba475c8973899') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Proxima Nova';
+  src: local('Proxima Nova Regular'),
+       url('https://cdn.builder.io/o/assets%2F2fe4147bb8c843bb8ebba475c8973899%2Ffd154d47078e49cabde17ad0ab74dcee?alt=media&token=0ef96911-70a4-4edc-aadd-cda41d6aed71&apiKey=2fe4147bb8c843bb8ebba475c8973899') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
+  /* ─── FONT FAMILIES ─────────────────────── */
+  --font-heading: 'Kazimir Text', Georgia, 'Times New Roman', serif;
+  --font-body:    'Proxima Nova', Arial, Helvetica, sans-serif;
   --yellow:     #FFC907;
   --yellow-dk:  #e6b400;
   --blue:       #003366;
@@ -19,6 +41,21 @@
   --correct:    #34d399;
   --wrong:      #f87171;
   --header-h:   80px;
+
+  /* ─── TYPOGRAPHY SCALE ─────────────────── */
+  --text-hero:    48px;   /* Card numbers, impact stat, final score */
+  --text-h1:      36px;   /* Page titles (splash, game over) */
+  --text-h2:      24px;   /* Score display, timer, topbar title */
+  --text-large:   22px;   /* Card fact text, instructions */
+  --text-body:    16px;   /* Standard text, buttons, nav links */
+  --text-small:   13px;   /* Units, fine print, labels */
+
+  /* ─── FONT WEIGHTS ─────────────────────── */
+  --weight-black: 900;
+  --weight-bold:  700;
+  --weight-semi:  600;
+  --weight-medium: 500;
+  --weight-normal: 400;
 }
 
 /* ─── RESET ────────────────────────────────── */
@@ -27,7 +64,7 @@
 html { font-size: 16px; }
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
   background: var(--cream);
   color: var(--dark);
   min-height: 100vh;
@@ -60,7 +97,7 @@ body {
 
 .header-nav { display: flex; gap: 24px; }
 .header-nav a {
-  font-size: 16px; font-weight: 600; color: var(--blue);
+  font-size: var(--text-body); font-weight: var(--weight-semi); color: var(--blue);
   text-decoration: none; transition: color .2s;
 }
 .header-nav a:hover { color: var(--light-blue); }
@@ -105,17 +142,21 @@ body {
    ============================================ */
 #splash-screen {
   margin-top: -100px;
+  min-height: calc(100vh + 100px); /* Compensate for negative margin */
 }
 
-   .splash-content {
+.splash-content {
   text-align: center;
   padding: 40px 24px;
   max-width: 700px;
+  position: relative;
+  z-index: 10;          /* Content above wave & droplets */
 }
 
 .splash-title {
+  font-family: var(--font-heading);
   font-size: 3.75rem;
-  font-weight: 900;
+  font-weight: var(--weight-normal);
   color: var(--blue);
   margin-bottom: 20px;
   line-height: 1.15;
@@ -135,13 +176,108 @@ body {
 }
 
 /* ============================================
+   SPLASH — WAVE ANIMATION (bottom)
+   Adjust: --wave-speed for cycle time
+          wave fill colors for palette
+          wave-container height for wave size
+   ============================================ */
+.wave-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 20vh;           /* Wave fills bottom ~20% of viewport */
+  z-index: 1;
+  pointer-events: none;   /* Clicks pass through to content */
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;            /* Double-wide for seamless scroll loop */
+  height: 100%;
+  will-change: transform;
+}
+
+/* Back wave — darker, slower */
+.wave-back path {
+  fill: var(--blue);
+  opacity: .12;
+}
+.wave-back {
+  animation: waveScroll 10s linear infinite;  /* Adjust: wave speed */
+}
+
+/* Front wave — lighter, faster */
+.wave-front path {
+  fill: var(--light-blue);
+  opacity: .18;
+}
+.wave-front {
+  animation: waveScroll 7s linear infinite;   /* Adjust: wave speed */
+  animation-direction: reverse;               /* Opposing motion for realism */
+}
+
+@keyframes waveScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }       /* Slide half (1 full copy) */
+}
+
+/* ============================================
+   SPLASH — FALLING DROPLETS
+   Adjust: Number of droplets in HTML
+           --drop-speed-* for fall duration
+           left % for horizontal spread
+           droplet width/height for size
+   ============================================ */
+.droplets {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;   /* Clicks pass through */
+  overflow: hidden;
+}
+
+/* Base droplet shape — teardrop via border-radius */
+.droplet {
+  position: absolute;
+  top: -40px;
+  background: var(--light-blue);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  will-change: transform;
+  animation: dropFall linear infinite;
+}
+
+/* Opacity is set per-droplet class below; the keyframe only moves Y.
+   Droplets start above the viewport and fall well past the bottom,
+   so no fade-in/out is needed — they're naturally off-screen at edges. */
+@keyframes dropFall {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(calc(100vh + 120px)); }
+}
+
+/*  Each droplet gets unique size, position, speed & delay.
+    Tweak left, width, height, animation-duration, animation-delay
+    to change the look.                                            */
+.droplet-1 { left:  8%; width: 10px; height: 14px; opacity: .35; animation-duration: 5.2s; animation-delay: 0s;   }
+.droplet-2 { left: 22%; width: 14px; height: 20px; opacity: .25; animation-duration: 4.5s; animation-delay: 1.2s; }
+.droplet-3 { left: 38%; width:  8px; height: 12px; opacity: .45; animation-duration: 6.1s; animation-delay: 0.5s; }
+.droplet-4 { left: 52%; width: 12px; height: 17px; opacity: .30; animation-duration: 5.8s; animation-delay: 2.8s; }
+.droplet-5 { left: 66%; width:  9px; height: 13px; opacity: .40; animation-duration: 4.0s; animation-delay: 1.7s; }
+.droplet-6 { left: 78%; width: 16px; height: 22px; opacity: .20; animation-duration: 6.8s; animation-delay: 3.5s; }
+.droplet-7 { left: 88%; width: 11px; height: 16px; opacity: .35; animation-duration: 5.0s; animation-delay: 0.8s; }
+.droplet-8 { left: 45%; width:  7px; height: 10px; opacity: .50; animation-duration: 3.6s; animation-delay: 4.2s; }
+
+/* ============================================
    BUTTONS (shared)
    ============================================ */
 .btn {
   display: inline-flex; align-items: center; justify-content: center;
   gap: 6px;
   border: none; border-radius: 8px;
-  font-family: inherit; font-weight: 700;
+  font-family: var(--font-body); font-weight: 700;
   cursor: pointer;
   transition: background .2s, transform .15s, box-shadow .2s;
 }
@@ -155,7 +291,7 @@ body {
 .btn-primary {
   background: var(--yellow);
   color: var(--dark);
-  font-size: 18px;
+  font-size: var(--text-body);
   padding: 18px 50px;
 }
 .btn-primary:hover { background: var(--yellow-dk); }
@@ -166,7 +302,7 @@ body {
   background: transparent;
   color: var(--light-blue);
   border: 2px solid var(--light-blue);
-  font-size: 15px;
+  font-size: var(--text-body);
   padding: 12px 0;
   flex: 1;
 }
@@ -193,7 +329,7 @@ body {
 .btn-play-again {
   background: var(--yellow);
   color: var(--dark);
-  font-size: 16px;
+  font-size: var(--text-body);
   padding: 16px 32px;
   flex: 1;
 }
@@ -204,7 +340,7 @@ body {
   background: transparent;
   color: var(--blue);
   border: 2px solid var(--blue);
-  font-size: 16px;
+  font-size: var(--text-body);
   padding: 14px 32px;
   flex: 1;
 }
@@ -231,15 +367,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24px;
+  padding: 0 max(24px, calc((100vw - 1400px) / 2));
   position: sticky;
   top: var(--header-h);
   z-index: 50;
 }
 
 .topbar-title {
-  font-size: 20px;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: var(--text-body);
+  font-weight: var(--weight-normal);
   color: var(--blue);
 }
 
@@ -250,13 +387,17 @@ body {
 }
 
 .topbar-score {
-  font-size: 15px;
+  font-size: var(--text-body);
   color: var(--dark);
-  font-weight: 400;
+  font-weight: var(--weight-semi);
+  letter-spacing: 0.5px;
+  /* display: flex;
+  align-items: center;
+  gap: 6px; */
 }
 .topbar-score strong {
-  font-weight: 800;
-  font-size: 18px;
+  font-weight: var(--weight-black);
+  font-size: var(--text-h2);
   color: var(--blue);
 }
 
@@ -275,7 +416,7 @@ body {
 .game-area {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: flex-start;
   gap: 24px;
   padding: 120px 32px 56px;
   width: 100%;
@@ -291,6 +432,7 @@ body {
 .card {
   flex: 1;
   max-width: 460px;
+  height: 360px;
   background: var(--white);
   border-radius: 14px;
   box-shadow: 0 4px 20px rgba(0,0,0,.07);
@@ -308,13 +450,14 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  overflow: hidden;
 }
 
 .card-fact-text {
-  font-size: 20px;
-  line-height: 1.5;
+  font-size: var(--text-large);
+  line-height: 1.4;
   color: var(--dark);
-  font-weight: 500;
+  font-weight: var(--weight-medium);
 }
 
 /* Number area — clean divider style */
@@ -328,8 +471,9 @@ body {
 }
 
 .card-number {
-  font-size: 44px;
-  font-weight: 800;
+  font-family: var(--font-heading);
+  font-size: var(--text-hero);
+  font-weight: var(--weight-normal);
   color: var(--blue);
   line-height: 1;
 }
@@ -341,8 +485,8 @@ body {
 }
 
 .card-unit {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: var(--text-small);
+  font-weight: var(--weight-semi);
   color: var(--dark);
   opacity: .45;
   margin-top: 4px;
@@ -435,17 +579,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  font-size: 14px;
-  font-weight: 600;
+  gap: 6px;
+  font-size: var(--text-body);
+  font-weight: var(--weight-semi);
   color: var(--dark);
   opacity: .65;
   padding: 10px 20px 0;
   white-space: nowrap;
 }
 .card-timer strong {
-  font-weight: 900;
-  font-size: 17px;
+  font-weight: var(--weight-black);
+  font-size: 22px;
   font-variant-numeric: tabular-nums;
   color: var(--blue);
 }
@@ -461,8 +605,8 @@ body {
   background: var(--yellow);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 900;
-  font-size: 18px;
+  font-weight: var(--weight-black);
+  font-size: var(--text-body);
   color: var(--blue);
   z-index: 5;
   box-shadow: 0 3px 12px rgba(255,201,7,.4);
@@ -503,8 +647,8 @@ body {
 }
 
 .gameover-label {
-  font-size: 13px;
-  font-weight: 700;
+  font-size: var(--text-small);
+  font-weight: var(--weight-bold);
   letter-spacing: 4px;
   text-transform: uppercase;
   color: var(--wrong);
@@ -512,8 +656,9 @@ body {
 }
 
 .gameover-title {
-  font-size: 36px;
-  font-weight: 900;
+  font-family: var(--font-heading);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-normal);
   color: var(--blue);
   margin-bottom: 24px;
 }
@@ -523,8 +668,8 @@ body {
   display: inline-block;
   background: var(--yellow);
   color: var(--blue);
-  font-size: 14px;
-  font-weight: 800;
+  font-size: var(--text-small);
+  font-weight: var(--weight-black);
   letter-spacing: 2px;
   text-transform: uppercase;
   padding: 8px 24px;
@@ -559,8 +704,8 @@ body {
 }
 
 .gameover-score-caption {
-  font-size: 11px;
-  font-weight: 700;
+  font-size: var(--text-small);
+  font-weight: var(--weight-bold);
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--light-blue);
@@ -568,8 +713,9 @@ body {
 }
 
 .gameover-score-num {
-  font-size: 32px;
-  font-weight: 900;
+  font-family: var(--font-heading);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-normal);
   color: var(--blue);
 }
 
@@ -584,15 +730,16 @@ body {
 
 .impact-stat {
   display: block;
-  font-size: 48px;
-  font-weight: 900;
+  font-family: var(--font-heading);
+  font-size: var(--text-hero);
+  font-weight: var(--weight-normal);
   color: var(--blue);
   margin-bottom: 10px;
   line-height: 1.1;
 }
 
 .impact-text {
-  font-size: 15px;
+  font-size: var(--text-body);
   color: var(--dark);
   line-height: 1.6;
   max-width: 500px;
@@ -610,8 +757,8 @@ body {
 /* Learn more */
 .learn-more-link {
   display: inline-block;
-  font-size: 15px;
-  font-weight: 700;
+  font-size: var(--text-body);
+  font-weight: var(--weight-bold);
   color: var(--brown);
   text-decoration: none;
   padding: 6px 2px;
@@ -645,6 +792,14 @@ body {
   .splash-title { font-size: 32px; }
   .splash-instructions { font-size: 15px; }
 
+  /* Waves — shorter on mobile */
+  .wave-container { height: 12vh; }
+
+  /* Droplets — hide last 3 to reduce clutter on small screens */
+  .droplet-6,
+  .droplet-7,
+  .droplet-8 { display: none; }
+
   /* Top bar */
   .game-topbar { height: 48px; padding: 0 16px; }
   .topbar-title { font-size: 15px; }
@@ -664,11 +819,12 @@ body {
   .card {
     width: 90vw;
     max-width: 100%;
+    height: 380px;
     flex: none;
   }
 
   .card-fact { padding: 20px 20px 12px; }
-  .card-fact-text { font-size: 18px; }
+  .card-fact-text { font-size: 20px; }
   .card-number { font-size: 42px; }
   .card-number-box { padding: 16px 20px; }
 
@@ -751,8 +907,8 @@ body {
   color: var(--white);
   padding: 12px 28px;
   border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--text-small);
+  font-weight: var(--weight-semi);
   z-index: 9999;
   opacity: 0;
   pointer-events: none;
