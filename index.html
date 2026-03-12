@@ -16,14 +16,14 @@
       </a>
     </div>
     <nav class="header-nav" id="header-nav">
-      <a href="https://www.charitywater.org/global-water-crisis" target="_blank">OUR MISSION</a>
-      <a href="https://www.charitywater.org/donate" target="_blank">DONATE</a>
-      <a href="https://www.charitywater.org/about" target="_blank">ABOUT</a>
+      <a href="https://www.charitywater.org/global-water-crisis" target="_blank" class="header-nav-link">OUR MISSION</a>
+      <a href="https://www.charitywater.org/donate" target="_blank" class="header-nav-link">DONATE</a>
+      <a href="https://www.charitywater.org/about" target="_blank" class="header-nav-link">ABOUT</a>
     </nav>
     <button class="hamburger" id="hamburger-btn" aria-label="Menu">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
+      <span class="hamburger-bar"></span>
     </button>
   </header>
 
@@ -43,24 +43,24 @@
   <!-- Animated wave at bottom -->
   <div class="wave-container" aria-hidden="true">
     <svg class="wave wave-back" viewBox="0 0 2880 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0,192 C360,280 720,100 1080,192 C1260,240 1380,210 1440,192 C1800,280 2160,100 2520,192 C2700,240 2820,210 2880,192 L2880,320 L0,320 Z"/>
+      <path class="wave-path" d="M0,192 C360,280 720,100 1080,192 C1260,240 1380,210 1440,192 C1800,280 2160,100 2520,192 C2700,240 2820,210 2880,192 L2880,320 L0,320 Z"/>
     </svg>
     <svg class="wave wave-front" viewBox="0 0 2880 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0,224 C240,140 480,300 720,224 C960,148 1200,300 1440,224 C1680,140 1920,300 2160,224 C2400,148 2640,300 2880,224 L2880,320 L0,320 Z"/>
+      <path class="wave-path" d="M0,224 C240,140 480,300 720,224 C960,148 1200,300 1440,224 C1680,140 1920,300 2160,224 C2400,148 2640,300 2880,224 L2880,320 L0,320 Z"/>
     </svg>
   </div>
 
   <!-- ========== START SCREEN ========== -->
-  <section id="splash-screen" class="screen active" role="main" aria-label="Start screen">
+  <section id="splash-screen" class="screen active splash-screen" role="main" aria-label="Start screen">
     <div class="splash-content">
       <h1 class="splash-title">H2Over/Under</h1>
-      <p class="splash-instructions">Compare water usage facts. Guess if the hidden number is <strong>HIGHER</strong> or <strong>LOWER</strong> than the shown number. One wrong guess = game over!</p>
-      <button id="start-btn" class="btn btn-primary">START GAME</button>
+      <p class="splash-instructions">Compare water usage facts. Guess if the hidden number is <strong class="splash-keyword">HIGHER</strong> or <strong class="splash-keyword">LOWER</strong> than the shown number. One wrong guess = game over!</p>
+      <button id="start-btn" class="btn btn-primary btn-start">START GAME</button>
     </div>
   </section>
 
   <!-- ========== GAME SCREEN ========== -->
-  <section id="game-screen" class="screen" role="main" aria-label="Game screen">
+  <section id="game-screen" class="screen game-screen" role="main" aria-label="Game screen">
 
     <!-- Top bar -->
     <div class="game-topbar">
@@ -68,7 +68,7 @@
         <button class="topbar-title" id="topbar-home-btn" aria-label="Return to start screen">H2Over/Under</button>
       </div>
       <div class="topbar-right">
-        <span class="topbar-score">SCORE: <strong id="score" aria-live="polite" aria-atomic="true">0</strong></span>
+        <span class="topbar-score">SCORE: <strong class="topbar-score-value" id="score" aria-live="polite" aria-atomic="true">0</strong></span>
       </div>
     </div>
 
@@ -97,7 +97,7 @@
           <p class="card-fact-text" id="right-label"></p>
         </div>
         <!-- Timer + Guess buttons (inside guess card) -->
-        <span class="card-timer" id="timer-pill">⏱ <strong id="timer" aria-live="off" aria-atomic="true">20</strong></span>
+        <span class="card-timer" id="timer-pill">⏱ <strong class="card-timer-value" id="timer" aria-live="off" aria-atomic="true">20</strong></span>
         <div class="guess-buttons" id="guess-buttons">
           <button class="btn btn-higher" id="btn-higher"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg> HIGHER</button>
           <button class="btn btn-lower" id="btn-lower"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg> LOWER</button>
@@ -112,7 +112,7 @@
   </section>
 
   <!-- ========== GAME OVER SCREEN ========== -->
-  <section id="results-screen" class="screen" role="main" aria-label="Game over screen">
+  <section id="results-screen" class="screen results-screen" role="main" aria-label="Game over screen">
     <div class="gameover-content">
       <span class="gameover-label">GAME OVER</span>
       <h2 class="gameover-title">H2Over/Under</h2>

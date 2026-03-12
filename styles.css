@@ -96,11 +96,11 @@ body {
 }
 
 .header-nav { display: flex; gap: 24px; }
-.header-nav a {
+.header-nav-link {
   font-size: var(--text-body); font-weight: var(--weight-semi); color: var(--blue);
   text-decoration: none; transition: color .2s;
 }
-.header-nav a:hover { color: var(--light-blue); }
+.header-nav-link:hover { color: var(--light-blue); }
 
 /* Hamburger (mobile only) */
 .hamburger {
@@ -109,14 +109,14 @@ body {
   padding: 12px;           /* Larger tap target (44×44 min) */
   margin: -8px;            /* Offset padding so visual position stays */
 }
-.hamburger span {
+.hamburger-bar {
   display: block; width: 26px; height: 2.5px;
   background: var(--blue); border-radius: 2px;
   transition: .25s ease;
 }
-.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(6px,6px); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(6px,-6px); }
+.hamburger.open .hamburger-bar:nth-child(1) { transform: rotate(45deg) translate(6px,6px); }
+.hamburger.open .hamburger-bar:nth-child(2) { opacity: 0; }
+.hamburger.open .hamburger-bar:nth-child(3) { transform: rotate(-45deg) translate(6px,-6px); }
 
 /* ============================================
    SCREENS
@@ -142,7 +142,7 @@ body {
 /* ============================================
    START SCREEN
    ============================================ */
-#splash-screen {
+.splash-screen {
   margin-top: -100px;
   min-height: calc(100vh + 100px); /* Compensate for negative margin */
 }
@@ -173,7 +173,7 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
-.splash-instructions strong {
+.splash-keyword {
   color: var(--blue);
 }
 
@@ -204,7 +204,7 @@ body {
 }
 
 /* Back wave — darker, slower */
-.wave-back path {
+.wave-back .wave-path {
   fill: var(--blue);
   opacity: .12;
 }
@@ -213,7 +213,7 @@ body {
 }
 
 /* Front wave — lighter, faster */
-.wave-front path {
+.wave-front .wave-path {
   fill: var(--light-blue);
   opacity: .18;
 }
@@ -356,7 +356,7 @@ body {
   0%,100% { box-shadow: 0 0 0 0 rgba(255,201,7,.45); }
   50%     { box-shadow: 0 0 0 12px rgba(255,201,7,0); }
 }
-#start-btn { animation: pulse 2.5s infinite; }
+.btn-start { animation: pulse 2.5s infinite; }
 
 /* ============================================
    GAME TOP BAR
@@ -401,11 +401,8 @@ body {
   color: var(--dark);
   font-weight: var(--weight-semi);
   letter-spacing: 0.5px;
-  /* display: flex;
-  align-items: center;
-  gap: 6px; */
 }
-.topbar-score strong {
+.topbar-score-value {
   font-weight: var(--weight-black);
   font-size: var(--text-h2);
   color: var(--blue);
@@ -419,7 +416,7 @@ body {
 /* ============================================
    GAME AREA
    ============================================ */
-#game-screen.active {
+.game-screen.active {
   justify-content: flex-start;
 }
 
@@ -597,7 +594,7 @@ body {
   padding: 10px 20px 0;
   white-space: nowrap;
 }
-.card-timer strong {
+.card-timer-value {
   font-weight: var(--weight-black);
   font-size: 22px;
   font-variant-numeric: tabular-nums;
@@ -608,7 +605,7 @@ body {
   color: #BF6C46;
   animation: timerPulse .5s ease infinite;
 }
-.card-timer.warning strong { color: #BF6C46; }
+.card-timer.warning .card-timer-value { color: #BF6C46; }
 /* ─── VS BADGE ─────────────────────────────── */
 .vs-badge {
   width: 56px; height: 56px;
@@ -644,7 +641,7 @@ body {
 /* ============================================
    GAME OVER SCREEN
    ============================================ */
-#results-screen.active {
+.results-screen.active {
   justify-content: flex-start;
   padding-top: calc(var(--header-h) + 86px);
 }
@@ -795,7 +792,7 @@ body {
     border-bottom: 1px solid rgba(0,0,0,.07);
     box-shadow: 0 8px 20px rgba(0,0,0,.06);
   }
-  .header-nav a {
+  .header-nav-link {
     font-size: 18px;
     padding: 12px 0;        /* Tall touch targets */
   }
@@ -818,7 +815,7 @@ body {
   .game-topbar { height: 48px; padding: 0 16px; }
   .topbar-title { font-size: 15px; }
   .topbar-score { font-size: 13px; }
-  .topbar-score strong { font-size: 15px; }
+  .topbar-score-value { font-size: 15px; }
   .topbar-right { gap: 12px; }
 
   /* Game area stacks vertically */
@@ -879,7 +876,7 @@ body {
 
   .gameover-content { padding: 20px 16px; }
 
-  #results-screen.active {
+  .results-screen.active {
     padding-top: calc(var(--header-h) + 16px);
   }
 }

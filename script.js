@@ -227,7 +227,7 @@ dom.hamburgerBtn.addEventListener('click', () => {
 });
 
 // Close mobile nav when clicking a link
-dom.headerNav.querySelectorAll('a').forEach(link => {
+dom.headerNav.querySelectorAll('.header-nav-link').forEach(link => {
   link.addEventListener('click', () => {
     dom.hamburgerBtn.classList.remove('open');
     dom.headerNav.classList.remove('open');
@@ -413,6 +413,9 @@ function advanceCards() {
     topCardFact = bottomCardFact;
     bottomCardFact = getRandomFact();
 
+    // Capture the right card's current rendered height BEFORE clearing transforms
+    const tallHeight = dom.cardRight.getBoundingClientRect().height;
+
     // Reset transforms and classes
     dom.cardRight.style.transform = '';
     dom.cardRight.style.transition = 'none';
@@ -427,36 +430,93 @@ function advanceCards() {
     dom.cardLeft.classList.remove('correct', 'wrong', 'card-enter', 'fade-out');
     dom.cardLeft.style.opacity = '1';
 
-    // Populate new right card (hidden number)
-    dom.rightLabel.textContent = bottomCardFact.fact;
-    dom.rightUnit.textContent = bottomCardFact.unit || '';
-    dom.rightNumber.classList.remove('reveal');
-    dom.rightNumber.classList.add('card-number--hidden');
-    dom.rightNumber.textContent = '???';
-    dom.cardRight.classList.remove('correct', 'wrong', 'card-enter');
+    // ─── MOBILE: animate height shrink, THEN show new card ───
+    if (isMobile) {
+      // Measure natural (short) height of left card with new content
+      const shortHeight = dom.cardLeft.getBoundingClientRect().height;
 
-    // Force reflow then pop in the new right card + VS
-    void dom.cardRight.offsetHeight;
-    dom.cardRight.style.transition = '';
-    dom.cardRight.classList.add('pop-in');
-    vsColumn.classList.add('pop-in');
+      // Lock left card at the tall height (matching the old right card)
+      dom.cardLeft.style.height = tallHeight + 'px';
+      dom.cardLeft.style.overflow = 'hidden';
+      dom.cardLeft.style.transition = 'none';
 
-    // Re-enable guess buttons
-    dom.guessButtons.classList.remove('hidden', 'fade-out');
-    dom.timerPill.classList.remove('fade-out');
-    dom.btnHigher.disabled = false;
-    dom.btnLower.disabled = false;
-    dom.btnHigher.removeAttribute('aria-disabled');
-    dom.btnLower.removeAttribute('aria-disabled');
-    isGuessing = false;
+      // Hide new right card + VS until shrink is done
+      dom.cardRight.style.opacity = '0';
+      dom.cardRight.style.pointerEvents = 'none';
+      vsColumn.style.opacity = '0';
 
-    // Clean up pop-in class after animation
-    setTimeout(() => {
-      dom.cardRight.classList.remove('pop-in');
-      vsColumn.classList.remove('pop-in');
-    }, 350);
+      // Double-rAF ensures the browser commits the tall height paint
+      requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        // Now animate to the short height
+        dom.cardLeft.style.transition = 'height 0.6s ease-in-out';
+        dom.cardLeft.style.height = shortHeight + 'px';
 
-    startTimer();
+        // When shrink finishes → show new card + VS
+        function onShrinkDone() {
+          // Clean up left card inline styles
+          dom.cardLeft.style.height = '';
+          dom.cardLeft.style.overflow = '';
+          dom.cardLeft.style.transition = '';
+
+          // Populate & pop in new right card + VS
+          populateAndShowNewCard();
+        }
+
+        dom.cardLeft.addEventListener('transitionend', function handler(e) {
+          if (e.propertyName !== 'height') return;
+          dom.cardLeft.removeEventListener('transitionend', handler);
+          onShrinkDone();
+        });
+
+        // Safety timeout in case transitionend never fires
+        setTimeout(() => {
+          if (dom.cardLeft.style.height !== '') onShrinkDone();
+        }, 800);
+      });
+      });
+    } else {
+      // Desktop: cards have fixed height, no shrink needed
+      populateAndShowNewCard();
+    }
+
+    function populateAndShowNewCard() {
+      // Populate new right card (hidden number)
+      dom.rightLabel.textContent = bottomCardFact.fact;
+      dom.rightUnit.textContent = bottomCardFact.unit || '';
+      dom.rightNumber.classList.remove('reveal');
+      dom.rightNumber.classList.add('card-number--hidden');
+      dom.rightNumber.textContent = '???';
+      dom.cardRight.classList.remove('correct', 'wrong', 'card-enter');
+
+      // Restore right card + VS visibility
+      dom.cardRight.style.opacity = '';
+      dom.cardRight.style.pointerEvents = '';
+      vsColumn.style.opacity = '';
+
+      // Force reflow then pop in the new right card + VS
+      void dom.cardRight.offsetHeight;
+      dom.cardRight.style.transition = '';
+      dom.cardRight.classList.add('pop-in');
+      vsColumn.classList.add('pop-in');
+
+      // Re-enable guess buttons
+      dom.guessButtons.classList.remove('hidden', 'fade-out');
+      dom.timerPill.classList.remove('fade-out');
+      dom.btnHigher.disabled = false;
+      dom.btnLower.disabled = false;
+      dom.btnHigher.removeAttribute('aria-disabled');
+      dom.btnLower.removeAttribute('aria-disabled');
+      isGuessing = false;
+
+      // Clean up pop-in class after animation
+      setTimeout(() => {
+        dom.cardRight.classList.remove('pop-in');
+        vsColumn.classList.remove('pop-in');
+      }, 350);
+
+      startTimer();
+    }
   }, 450);
 }
 
