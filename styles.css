@@ -173,6 +173,59 @@ body {
 .header-nav-link:hover { color: var(--light-blue); }
 
 /* Hamburger (mobile only) */
+/* Mute toggle button */
+.mute-btn {
+  position: absolute;
+  right: max(40px, calc((100vw - 1200px) / 2));
+  background: transparent;
+  border: 1.5px solid rgba(0, 51, 102, .22);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background .2s, border-color .2s, transform .15s;
+}
+.mute-btn:hover {
+  background: rgba(0, 51, 102, .06);
+  border-color: rgba(0, 51, 102, .45);
+  transform: scale(1.08);
+}
+.mute-btn:active { transform: scale(.93); }
+
+.mute-icon {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mute-icon-speaker {
+  fill: currentColor;
+  stroke: none;
+}
+
+.mute-icon-slash {
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.mute-btn.is-muted .mute-icon-wave {
+  opacity: 0;
+}
+
+.mute-btn.is-muted .mute-icon-slash {
+  opacity: 1;
+}
+
+/* Hamburger (mobile only) */
 .hamburger {
   display: none; flex-direction: column; gap: 6px;
   background: none; border: none; cursor: pointer;
@@ -1004,6 +1057,13 @@ body {
   /* Header */
   .site-header {
     padding: 0 20px;
+  }
+
+  .mute-btn {
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
 
   .header-nav {

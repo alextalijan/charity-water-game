@@ -429,8 +429,9 @@ function updateTimerDisplay() {
   dom.timerEl.textContent = timeLeft;
 
   // Visual warning when running low
-  if (timeLeft <= 3) {
+  if (timeLeft <= 3 && timeLeft > 0) {
     dom.timerPill.classList.add('warning');
+    playWaterDrip();
   } else {
     dom.timerPill.classList.remove('warning');
   }
@@ -703,9 +704,11 @@ function endGame() {
   dom.gameoverMode.textContent = `${modeLabel} MODE`;
   dom.bestCaption.textContent = `BEST (${modeLabel})`;
 
-  // Show or hide NEW RECORD banner
+  // Show or hide NEW RECORD banner + celebrate
   if (isNewRecord && currentScore > 0) {
     dom.newRecord.classList.remove('hidden');
+    playCelebration();
+    triggerConfetti();
   } else {
     dom.newRecord.classList.add('hidden');
   }
@@ -839,6 +842,191 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ─── INIT ──────────────────────────────────────────────────────────────────────
+// ─── AUDIO SYSTEM ──────────────────────────────────────────────────────────────
+let audioCtx = null;
+let isMuted = localStorage.getItem('soundMuted') === 'true';
+
+function getAudioContext() {
+  if (isMuted) return null;
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) { return null; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+// Water drip: filtered noise burst with descending frequency sweep
+function playWaterDrip() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  const duration = 0.16;
+  const buf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * duration), ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
+
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+
+  const bpf = ctx.createBiquadFilter();
+  bpf.type = 'bandpass';
+  bpf.frequency.setValueAtTime(2200, ctx.currentTime);
+  bpf.frequency.exponentialRampToValueAtTime(500, ctx.currentTime + duration);
+  bpf.Q.value = 1.5;
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.32, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+
+  src.connect(bpf); bpf.connect(gain); gain.connect(ctx.destination);
+  src.start(ctx.currentTime);
+  src.stop(ctx.currentTime + duration + 0.01);
+}
+
+// Celebration: rising C major arpeggio + noise splash layer
+function playCelebration() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  // Ascending arpeggio C5 → E5 → G5 → C6
+  [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.connect(g); g.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    const t = ctx.currentTime + i * 0.1;
+    g.gain.setValueAtTime(0.001, t);
+    g.gain.linearRampToValueAtTime(0.12, t + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.55);
+    osc.start(t); osc.stop(t + 0.6);
+  });
+
+  // Noise splash layer for water texture
+  const splashDur = 0.55;
+  const splashBuf = ctx.createBuffer(1, Math.floor(ctx.sampleRate * splashDur), ctx.sampleRate);
+  const splashData = splashBuf.getChannelData(0);
+  for (let i = 0; i < splashData.length; i++) splashData[i] = Math.random() * 2 - 1;
+
+  const splashSrc = ctx.createBufferSource();
+  splashSrc.buffer = splashBuf;
+
+  const hpf = ctx.createBiquadFilter();
+  hpf.type = 'highpass'; hpf.frequency.value = 3000;
+
+  const splashGain = ctx.createGain();
+  splashGain.gain.setValueAtTime(0.06, ctx.currentTime);
+  splashGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + splashDur);
+
+  splashSrc.connect(hpf); hpf.connect(splashGain); splashGain.connect(ctx.destination);
+  splashSrc.start(ctx.currentTime); splashSrc.stop(ctx.currentTime + splashDur + 0.01);
+}
+
+function toggleMute() {
+  isMuted = !isMuted;
+  localStorage.setItem('soundMuted', isMuted);
+  updateMuteButton();
+}
+
+function updateMuteButton() {
+  const btn = document.getElementById('mute-toggle');
+  if (!btn) return;
+  btn.classList.toggle('is-muted', isMuted);
+  btn.setAttribute('aria-label', isMuted ? 'Unmute sounds' : 'Mute sounds');
+  btn.setAttribute('aria-pressed', String(isMuted));
+}
+
+// ─── CANVAS CONFETTI ───────────────────────────────────────────────────────────
+function triggerConfetti() {
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;';
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+
+  const ctx = canvas.getContext('2d');
+  const COLORS = ['#FFC907', '#003366', '#77A8BB', '#FED8C1', '#BF6C46', '#ffffff'];
+  const pieces = [];
+
+  for (let i = 0; i < 140; i++) {
+    const side = Math.random();
+    let x, y, vx, vy;
+    if (side < 0.5) {
+      // burst from left side
+      x = Math.random() * canvas.width * 0.15;
+      y = canvas.height * 0.2 + Math.random() * canvas.height * 0.6;
+      vx = Math.random() * 9 + 3;
+      vy = Math.random() * -10 - 3;
+    } else {
+      // burst from right side
+      x = canvas.width - Math.random() * canvas.width * 0.15;
+      y = canvas.height * 0.2 + Math.random() * canvas.height * 0.6;
+      vx = -(Math.random() * 9 + 3);
+      vy = Math.random() * -10 - 3;
+    }
+    pieces.push({
+      x, y, vx, vy,
+      gravity:       0.28 + Math.random() * 0.12,
+      drag:          0.985,
+      rotation:      Math.random() * Math.PI * 2,
+      rotSpeed:      (Math.random() - 0.5) * 0.18,
+      color:         COLORS[Math.floor(Math.random() * COLORS.length)],
+      w:             Math.random() * 10 + 5,
+      h:             Math.random() * 6 + 3,
+      shape:         Math.floor(Math.random() * 3), // 0=rect 1=circle 2=triangle
+      opacity:       1,
+    });
+  }
+
+  const DURATION = 4200;
+  let start = null;
+
+  function draw(ts) {
+    if (!start) start = ts;
+    const elapsed = ts - start;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+
+    for (const p of pieces) {
+      p.vx *= p.drag;
+      p.vy += p.gravity;
+      p.x  += p.vx;
+      p.y  += p.vy;
+      p.rotation += p.rotSpeed;
+      if (elapsed > DURATION - 1200) p.opacity = Math.max(0, p.opacity - 0.018);
+
+      if (p.y < canvas.height + 30 && p.opacity > 0.01) {
+        alive = true;
+        ctx.save();
+        ctx.globalAlpha = p.opacity;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation);
+        ctx.fillStyle = p.color;
+        if (p.shape === 0) {
+          ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        } else if (p.shape === 1) {
+          ctx.beginPath(); ctx.ellipse(0, 0, p.w / 2, p.h / 2, 0, 0, Math.PI * 2); ctx.fill();
+        } else {
+          ctx.beginPath();
+          ctx.moveTo(0, -p.h); ctx.lineTo(p.w / 2, p.h / 2); ctx.lineTo(-p.w / 2, p.h / 2);
+          ctx.closePath(); ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    if (alive && elapsed < DURATION + 500) {
+      requestAnimationFrame(draw);
+    } else {
+      canvas.remove();
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+// ─── INIT ──────────────────────────────────────────────────────────────────────
 (function init() {
   refreshSplashBestScores();
   dom.finalHighScore.textContent = bestScores.easy.toLocaleString();
@@ -861,4 +1049,9 @@ document.addEventListener('keydown', (e) => {
   updateDifficultyDisplay();
   updateLivesDisplay();
   dom.difficultyEasyBtn.focus();
+
+  // Mute toggle
+  updateMuteButton();
+  const muteBtn = document.getElementById('mute-toggle');
+  if (muteBtn) muteBtn.addEventListener('click', toggleMute);
 })();
