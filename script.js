@@ -169,6 +169,7 @@ const dom = {
   bestExpertEl:        $('#best-expert'),
 
   // Game sub-header
+  topbarHomeBtn:   $('#topbar-home-btn'),
   topbarDifficulty: $('#topbar-difficulty'),
   topbarLives:      $('#topbar-lives'),
   scoreEl:        $('#score'),
@@ -203,7 +204,13 @@ const dom = {
   awarenessStat:  $('#awareness-stat'),
   awarenessText:  $('#awareness-text'),
   playAgainBtn:   $('#play-again-btn'),
+  resultsHomeBtn: $('#results-home-btn'),
   shareBtn:       $('#share-btn'),
+
+  // Confirm modal
+  leaveConfirmOverlay: $('#leave-confirm-overlay'),
+  leaveConfirmCancelBtn: $('#leave-confirm-cancel'),
+  leaveConfirmAcceptBtn: $('#leave-confirm-accept'),
 };
 
 // ─── GAME STATE ────────────────────────────────────────────────────────────────
@@ -217,6 +224,7 @@ let timerDuration = 10;
 let timeLeft = 10;
 let timerInterval = null;
 let isGuessing = false; // locks input while revealing
+let leaveConfirmOpen = false;
 
 const bestScores = {
   easy: parseInt(localStorage.getItem('bestScore_easy')) || 0,
@@ -245,6 +253,7 @@ const dropletsEl = document.querySelector('.droplets');
 function showScreen(screen) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   screen.classList.add('active');
+  hideLeaveConfirm();
 
   // Hide droplets during gameplay (keep on splash & game over)
   if (screen === dom.gameScreen) {
@@ -255,18 +264,19 @@ function showScreen(screen) {
 }
 
 // ─── HAMBURGER MENU (mobile) ───────────────────────────────────────────────────
-dom.hamburgerBtn.addEventListener('click', () => {
-  dom.hamburgerBtn.classList.toggle('open');
-  dom.headerNav.classList.toggle('open');
-});
-
-// Close mobile nav when clicking a link
-dom.headerNav.querySelectorAll('.header-nav-link').forEach(link => {
-  link.addEventListener('click', () => {
-    dom.hamburgerBtn.classList.remove('open');
-    dom.headerNav.classList.remove('open');
+if (dom.hamburgerBtn && dom.headerNav) {
+  dom.hamburgerBtn.addEventListener('click', () => {
+    dom.hamburgerBtn.classList.toggle('open');
+    dom.headerNav.classList.toggle('open');
   });
-});
+
+  dom.headerNav.querySelectorAll('.header-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      dom.hamburgerBtn.classList.remove('open');
+      dom.headerNav.classList.remove('open');
+    });
+  });
+}
 
 // ─── UTILITY HELPERS ───────────────────────────────────────────────────────────
 function shuffle(arr) {
@@ -298,13 +308,7 @@ function refreshSplashBestScores() {
     const bestEl = getBestElementForDifficulty(difficulty);
     if (!bestEl) return;
 
-    if (value > 0) {
-      bestEl.textContent = `Best: ${value.toLocaleString()}`;
-      bestEl.classList.remove('hidden');
-    } else {
-      bestEl.textContent = 'Best: —';
-      bestEl.classList.add('hidden');
-    }
+    bestEl.textContent = value > 0 ? `Best: ${value.toLocaleString()}` : '';
   });
 }
 
@@ -434,6 +438,19 @@ function updateTimerDisplay() {
 
 function stopTimer() {
   clearInterval(timerInterval);
+}
+
+function showLeaveConfirm() {
+  leaveConfirmOpen = true;
+  dom.leaveConfirmOverlay.classList.remove('hidden');
+  dom.leaveConfirmOverlay.setAttribute('aria-hidden', 'false');
+  dom.leaveConfirmCancelBtn.focus();
+}
+
+function hideLeaveConfirm() {
+  leaveConfirmOpen = false;
+  dom.leaveConfirmOverlay.classList.add('hidden');
+  dom.leaveConfirmOverlay.setAttribute('aria-hidden', 'true');
 }
 
 // ─── HANDLE GUESS ──────────────────────────────────────────────────────────────
@@ -639,6 +656,7 @@ function advanceCards() {
 
 // ─── START GAME ────────────────────────────────────────────────────────────────
 function startGame(difficulty = currentDifficulty) {
+  hideLeaveConfirm();
   currentDifficulty = difficulty || 'easy';
   const config = difficultyConfig[currentDifficulty] || difficultyConfig.easy;
 
@@ -672,6 +690,7 @@ function displayImpactFact() {
 // ─── END GAME ──────────────────────────────────────────────────────────────────
 function endGame() {
   stopTimer();
+  hideLeaveConfirm();
 
   // Check and update best score
   const isNewRecord = updateBestScore(currentDifficulty, currentScore);
@@ -742,9 +761,12 @@ function shareScore() {
 }
 
 function returnToMenu() {
-  const confirmed = confirm('Leave game? Progress will be lost.');
-  if (!confirmed) return;
+  if (!dom.gameScreen.classList.contains('active')) return;
+  showLeaveConfirm();
+}
 
+function confirmLeaveToMenu() {
+  hideLeaveConfirm();
   stopTimer();
   isGuessing = false;
   currentScore = 0;
@@ -762,12 +784,23 @@ dom.difficultyHardBtn.addEventListener('click', () => startGame('hard'));
 dom.difficultyExpertBtn.addEventListener('click', () => startGame('expert'));
 
 // Topbar menu button → confirm + return to splash
-document.getElementById('topbar-home-btn').addEventListener('click', returnToMenu);
+dom.topbarHomeBtn.addEventListener('click', returnToMenu);
 
 dom.btnHigher.addEventListener('click', () => handleGuess(true));
 dom.btnLower.addEventListener('click', () => handleGuess(false));
 dom.playAgainBtn.addEventListener('click', () => startGame(currentDifficulty));
+dom.resultsHomeBtn.addEventListener('click', () => {
+  hideLeaveConfirm();
+  currentScore = 0;
+  dom.scoreEl.textContent = '0';
+  showScreen(dom.splashScreen);
+});
 dom.shareBtn.addEventListener('click', shareScore);
+dom.leaveConfirmCancelBtn.addEventListener('click', hideLeaveConfirm);
+dom.leaveConfirmAcceptBtn.addEventListener('click', confirmLeaveToMenu);
+dom.leaveConfirmOverlay.addEventListener('click', (e) => {
+  if (e.target === dom.leaveConfirmOverlay) hideLeaveConfirm();
+});
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
@@ -784,6 +817,13 @@ document.addEventListener('keydown', (e) => {
   // Handle Enter on results screen
   if (e.key === 'Enter' && dom.resultsScreen.classList.contains('active')) {
     dom.playAgainBtn.click();
+    return;
+  }
+
+  if (leaveConfirmOpen) {
+    if (e.key === 'Escape') {
+      hideLeaveConfirm();
+    }
     return;
   }
 
@@ -813,7 +853,10 @@ document.addEventListener('keydown', (e) => {
   dom.difficultyHardBtn.setAttribute('aria-label', 'Start Hard mode');
   dom.difficultyExpertBtn.setAttribute('aria-label', 'Start Expert mode');
   dom.playAgainBtn.setAttribute('aria-label', 'Play again');
+  dom.resultsHomeBtn.setAttribute('aria-label', 'Return to difficulty menu');
   dom.shareBtn.setAttribute('aria-label', 'Share your score');
+  dom.leaveConfirmCancelBtn.setAttribute('aria-label', 'Keep playing');
+  dom.leaveConfirmAcceptBtn.setAttribute('aria-label', 'Leave the current game');
 
   updateDifficultyDisplay();
   updateLivesDisplay();

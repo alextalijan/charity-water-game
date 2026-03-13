@@ -15,16 +15,6 @@
         <img src="charity-water-logo.svg" alt="charity: water" class="logo-img">
       </a>
     </div>
-    <nav class="header-nav" id="header-nav">
-      <a href="https://www.charitywater.org/global-water-crisis" target="_blank" class="header-nav-link">OUR MISSION</a>
-      <a href="https://www.charitywater.org/donate" target="_blank" class="header-nav-link">DONATE</a>
-      <a href="https://www.charitywater.org/about" target="_blank" class="header-nav-link">ABOUT</a>
-    </nav>
-    <button class="hamburger" id="hamburger-btn" aria-label="Menu">
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-      <span class="hamburger-bar"></span>
-    </button>
   </header>
 
   <!-- ========== GLOBAL WATER ANIMATIONS (all screens) ========== -->
@@ -57,23 +47,35 @@
       <p class="splash-instructions">Compare water usage facts. Guess if the hidden number is <strong class="splash-keyword">HIGHER</strong> or <strong class="splash-keyword">LOWER</strong> than the shown number. One wrong guess = game over!</p>
       <div class="difficulty-grid" id="difficulty-grid">
         <div class="difficulty-option">
-          <button class="btn difficulty-btn difficulty-btn-easy" id="difficulty-easy" data-difficulty="easy" aria-label="Start Easy mode">EASY</button>
-          <div class="difficulty-best" id="best-easy">Best: —</div>
+          <button class="btn difficulty-btn difficulty-btn-easy" id="difficulty-easy" data-difficulty="easy" aria-label="Start Easy mode">
+            <span class="difficulty-label">EASY</span>
+            <span class="difficulty-best" id="best-easy"></span>
+          </button>
+          <p class="difficulty-desc">20s per guess · 3 lives · all facts</p>
         </div>
 
         <div class="difficulty-option">
-          <button class="btn difficulty-btn difficulty-btn-medium" id="difficulty-medium" data-difficulty="medium" aria-label="Start Medium mode">MEDIUM</button>
-          <div class="difficulty-best" id="best-medium">Best: —</div>
+          <button class="btn difficulty-btn difficulty-btn-medium" id="difficulty-medium" data-difficulty="medium" aria-label="Start Medium mode">
+            <span class="difficulty-label">MEDIUM</span>
+            <span class="difficulty-best" id="best-medium"></span>
+          </button>
+          <p class="difficulty-desc">15s per guess · 1 life · all facts</p>
         </div>
 
         <div class="difficulty-option">
-          <button class="btn difficulty-btn difficulty-btn-hard" id="difficulty-hard" data-difficulty="hard" aria-label="Start Hard mode">HARD</button>
-          <div class="difficulty-best" id="best-hard">Best: —</div>
+          <button class="btn difficulty-btn difficulty-btn-hard" id="difficulty-hard" data-difficulty="hard" aria-label="Start Hard mode">
+            <span class="difficulty-label">HARD</span>
+            <span class="difficulty-best" id="best-hard"></span>
+          </button>
+          <p class="difficulty-desc">10s per guess · 1 life · all facts</p>
         </div>
 
         <div class="difficulty-option">
-          <button class="btn difficulty-btn difficulty-btn-expert" id="difficulty-expert" data-difficulty="expert" aria-label="Start Expert mode">EXPERT</button>
-          <div class="difficulty-best" id="best-expert">Best: —</div>
+          <button class="btn difficulty-btn difficulty-btn-expert" id="difficulty-expert" data-difficulty="expert" aria-label="Start Expert mode">
+            <span class="difficulty-label">EXPERT</span>
+            <span class="difficulty-best" id="best-expert"></span>
+          </button>
+          <p class="difficulty-desc">6s per guess · 1 life · charity: water only</p>
         </div>
       </div>
     </div>
@@ -85,7 +87,10 @@
     <!-- Top bar -->
     <div class="game-topbar">
       <div class="topbar-left">
-        <button class="topbar-menu-btn" id="topbar-home-btn" aria-label="Return to menu">🏠</button>
+        <button class="topbar-menu-btn" id="topbar-home-btn" aria-label="Return to menu">
+          <span class="topbar-menu-icon">←</span>
+          <span class="topbar-menu-text">MENU</span>
+        </button>
         <span class="topbar-title">H2Over/Under</span>
         <span class="topbar-difficulty" id="topbar-difficulty">- EASY</span>
       </div>
@@ -166,11 +171,37 @@
       <div class="gameover-actions">
         <button class="btn btn-play-again" id="play-again-btn"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> PLAY AGAIN</button>
         <button class="btn btn-share" id="share-btn"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg> SHARE YOUR SCORE</button>
+        <button class="btn btn-home" id="results-home-btn"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg> CHOOSE DIFFICULTY</button>
       </div>
 
       <a href="https://www.charitywater.org/global-water-crisis" target="_blank" class="learn-more-link">Learn more about our mission →</a>
     </div>
   </section>
+
+  <div class="confirm-overlay hidden" id="leave-confirm-overlay" aria-hidden="true">
+    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="leave-confirm-title" aria-describedby="leave-confirm-text">
+      <h3 class="confirm-title" id="leave-confirm-title">Leave game?</h3>
+      <p class="confirm-text" id="leave-confirm-text">Your progress will be lost. Are you sure you want to leave?</p>
+      <div class="confirm-actions">
+        <button class="btn confirm-btn confirm-btn-secondary" id="leave-confirm-cancel">KEEP PLAYING</button>
+        <button class="btn confirm-btn confirm-btn-primary" id="leave-confirm-accept">LEAVE GAME</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="site-footer-wrapper">
+    <footer class="site-footer" aria-label="charity: water links">
+      <div class="site-footer-inner">
+        <p class="site-footer-title">Explore charity: water</p>
+        <nav class="site-footer-nav" aria-label="Footer links">
+          <a href="https://www.charitywater.org" target="_blank" class="site-footer-link">Official Site</a>
+          <a href="https://www.charitywater.org/donate" target="_blank" class="site-footer-link">Donate</a>
+          <a href="https://www.charitywater.org/global-water-crisis" target="_blank" class="site-footer-link">Water Crisis</a>
+          <a href="https://www.charitywater.org/about" target="_blank" class="site-footer-link">About</a>
+        </nav>
+      </div>
+    </footer>
+  </div>
 
   <script src="script.js"></script>
 </body>
