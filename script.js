@@ -508,6 +508,8 @@ function handleWrongAnswer() {
   if (currentDifficulty === 'easy') {
     livesRemaining--;
     updateLivesDisplay();
+    playLifeLostCue();
+    triggerLifeLostIndicator();
 
     if (livesRemaining > 0) {
       setTimeout(() => {
@@ -882,6 +884,41 @@ function playWaterDrip() {
   src.connect(bpf); bpf.connect(gain); gain.connect(ctx.destination);
   src.start(ctx.currentTime);
   src.stop(ctx.currentTime + duration + 0.01);
+}
+
+// Life lost cue: soft descending tone to make Easy-mode life loss clearer
+function playLifeLostCue() {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const lowpass = ctx.createBiquadFilter();
+
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(520, ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(320, ctx.currentTime + 0.2);
+
+  lowpass.type = 'lowpass';
+  lowpass.frequency.value = 1700;
+
+  gain.gain.setValueAtTime(0.001, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(0.045, ctx.currentTime + 0.03);
+  gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+
+  osc.connect(lowpass);
+  lowpass.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start(ctx.currentTime);
+  osc.stop(ctx.currentTime + 0.23);
+}
+
+function triggerLifeLostIndicator() {
+  if (currentDifficulty !== 'easy') return;
+  dom.topbarLives.classList.remove('life-lost');
+  void dom.topbarLives.offsetWidth;
+  dom.topbarLives.classList.add('life-lost');
 }
 
 // Celebration: rising C major arpeggio + noise splash layer

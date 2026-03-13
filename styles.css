@@ -672,6 +672,16 @@ body {
   line-height: 1;
 }
 
+.topbar-lives.life-lost {
+  animation: lifeLostPulse .32s ease;
+}
+
+@keyframes lifeLostPulse {
+  0%   { transform: scale(1); opacity: 1; }
+  30%  { transform: scale(1.16); opacity: .82; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 @keyframes timerPulse {
   0%,100% { transform: scale(1); }
   50%     { transform: scale(1.06); }
@@ -767,8 +777,8 @@ body {
 /* Reveal animation */
 .card-number.reveal {
   animation: revealPop .45s ease forwards;
-  opacity: 1 !important;
-  letter-spacing: 0 !important;
+  opacity: 1;
+  letter-spacing: 0;
 }
 @keyframes revealPop {
   from { transform: scale(.6); opacity: 0; }
@@ -1217,8 +1227,16 @@ body {
 .btn[disabled] {
   opacity: .45;
   cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn:disabled:hover,
+.btn:disabled:active,
+.btn[disabled]:hover,
+.btn[disabled]:active {
+  transform: none;
+  box-shadow: none;
 }
 
 /* ============================================
@@ -1349,4 +1367,8 @@ body {
 /* ============================================
    UTILITY
    ============================================ */
-.hidden { display: none !important; }
+.hidden,
+.screen.hidden,
+.screen.active.hidden {
+  display: none;
+}
