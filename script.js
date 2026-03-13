@@ -159,9 +159,18 @@ const dom = {
   headerNav:      $('#header-nav'),
 
   // Splash
-  startBtn:       $('#start-btn'),
+  difficultyEasyBtn:   $('#difficulty-easy'),
+  difficultyMediumBtn: $('#difficulty-medium'),
+  difficultyHardBtn:   $('#difficulty-hard'),
+  difficultyExpertBtn: $('#difficulty-expert'),
+  bestEasyEl:          $('#best-easy'),
+  bestMediumEl:        $('#best-medium'),
+  bestHardEl:          $('#best-hard'),
+  bestExpertEl:        $('#best-expert'),
 
   // Game sub-header
+  topbarDifficulty: $('#topbar-difficulty'),
+  topbarLives:      $('#topbar-lives'),
   scoreEl:        $('#score'),
   timerEl:        $('#timer'),
   timerPill:      $('#timer-pill'),
@@ -186,6 +195,8 @@ const dom = {
   btnLower:       $('#btn-lower'),
 
   // Results / game-over
+  gameoverMode:   $('#gameover-mode'),
+  bestCaption:    $('#best-score-caption'),
   finalScore:     $('#final-score'),
   finalHighScore: $('#final-high-score'),
   newRecord:      $('#new-record'),
@@ -197,13 +208,36 @@ const dom = {
 
 // ─── GAME STATE ────────────────────────────────────────────────────────────────
 let currentScore = 0;
-let bestScore = parseInt(localStorage.getItem('waterHL_bestScore')) || 0;
 let factsPool = [];
 let topCardFact = null;
 let bottomCardFact = null;
-let timeLeft = 20;
+let currentDifficulty = null;
+let livesRemaining = 1;
+let timerDuration = 10;
+let timeLeft = 10;
 let timerInterval = null;
 let isGuessing = false; // locks input while revealing
+
+const bestScores = {
+  easy: parseInt(localStorage.getItem('bestScore_easy')) || 0,
+  medium: parseInt(localStorage.getItem('bestScore_medium')) || 0,
+  hard: parseInt(localStorage.getItem('bestScore_hard')) || 0,
+  expert: parseInt(localStorage.getItem('bestScore_expert')) || 0,
+};
+
+const difficultyConfig = {
+  easy: { timer: 20, lives: 3 },
+  medium: { timer: 15, lives: 1 },
+  hard: { timer: 10, lives: 1 },
+  expert: { timer: 6, lives: 1 },
+};
+
+const difficultyLabel = {
+  easy: 'EASY',
+  medium: 'MEDIUM',
+  hard: 'HARD',
+  expert: 'EXPERT',
+};
 
 // ─── SCREEN MANAGEMENT ─────────────────────────────────────────────────────────
 const dropletsEl = document.querySelector('.droplets');
@@ -251,13 +285,63 @@ function formatNumber(n) {
   return n.toLocaleString();
 }
 
+function getBestElementForDifficulty(difficulty) {
+  if (difficulty === 'easy') return dom.bestEasyEl;
+  if (difficulty === 'medium') return dom.bestMediumEl;
+  if (difficulty === 'hard') return dom.bestHardEl;
+  return dom.bestExpertEl;
+}
+
+function refreshSplashBestScores() {
+  Object.keys(bestScores).forEach((difficulty) => {
+    const value = bestScores[difficulty];
+    const bestEl = getBestElementForDifficulty(difficulty);
+    if (!bestEl) return;
+
+    if (value > 0) {
+      bestEl.textContent = `Best: ${value.toLocaleString()}`;
+      bestEl.classList.remove('hidden');
+    } else {
+      bestEl.textContent = 'Best: —';
+      bestEl.classList.add('hidden');
+    }
+  });
+}
+
+function updateBestScore(difficulty, score) {
+  if (!difficulty) return false;
+  if (score > bestScores[difficulty]) {
+    bestScores[difficulty] = score;
+    localStorage.setItem(`bestScore_${difficulty}`, score);
+    return true;
+  }
+  return false;
+}
+
+function updateDifficultyDisplay() {
+  const label = difficultyLabel[currentDifficulty] || 'EASY';
+  dom.topbarDifficulty.textContent = `- ${label}`;
+}
+
+function updateLivesDisplay() {
+  if (currentDifficulty !== 'easy') {
+    dom.topbarLives.classList.add('hidden');
+    return;
+  }
+
+  const totalLives = difficultyConfig.easy.lives;
+  const fullHearts = '❤️'.repeat(Math.max(livesRemaining, 0));
+  const emptyHearts = '🖤'.repeat(Math.max(totalLives - livesRemaining, 0));
+  dom.topbarLives.textContent = `${fullHearts}${emptyHearts}`;
+  dom.topbarLives.classList.remove('hidden');
+}
+
 // ─── INIT FACTS POOL ───────────────────────────────────────────────────────────
 function buildFactsPool() {
-  // Combine both arrays and shuffle
-  const combined = [
-    ...waterFacts.charityWaterFacts,
-    ...waterFacts.casualFacts
-  ];
+  const combined = currentDifficulty === 'expert'
+    ? [...waterFacts.charityWaterFacts]
+    : [...waterFacts.charityWaterFacts, ...waterFacts.casualFacts];
+
   factsPool = shuffle(combined);
 }
 
@@ -305,7 +389,7 @@ function loadCards() {
 
 // ─── TIMER ─────────────────────────────────────────────────────────────────────
 function startTimer() {
-  timeLeft = 20;
+  timeLeft = timerDuration;
   updateTimerDisplay();
 
   clearInterval(timerInterval);
@@ -315,7 +399,24 @@ function startTimer() {
 
     if (timeLeft <= 0) {
       stopTimer();
-      endGame(); // Timer ran out = game over
+      if (isGuessing) return;
+      isGuessing = true;
+
+      dom.btnHigher.disabled = true;
+      dom.btnLower.disabled = true;
+      dom.btnHigher.setAttribute('aria-disabled', 'true');
+      dom.btnLower.setAttribute('aria-disabled', 'true');
+      dom.guessButtons.classList.add('fade-out');
+      dom.timerPill.classList.add('fade-out');
+
+      dom.rightNumber.classList.remove('card-number--hidden');
+      dom.rightNumber.classList.add('reveal');
+      dom.rightNumber.textContent = formatNumber(bottomCardFact.number);
+      dom.cardRight.classList.add('wrong');
+
+      setTimeout(() => {
+        handleWrongAnswer();
+      }, 600);
     }
   }, 1000);
 }
@@ -379,10 +480,26 @@ function handleGuess(guessedHigher) {
       if (correct) {
         advanceCards();
       } else {
-        endGame();
+        handleWrongAnswer();
       }
     }, 600);
   }, 400);
+}
+
+function handleWrongAnswer() {
+  if (currentDifficulty === 'easy') {
+    livesRemaining--;
+    updateLivesDisplay();
+
+    if (livesRemaining > 0) {
+      setTimeout(() => {
+        advanceCards();
+      }, 1500);
+      return;
+    }
+  }
+
+  endGame();
 }
 
 // ─── ADVANCE CARDS (correct answer — animated shift) ───────────────────────────
@@ -521,10 +638,19 @@ function advanceCards() {
 }
 
 // ─── START GAME ────────────────────────────────────────────────────────────────
-function startGame() {
-  // Reset state
+function startGame(difficulty = currentDifficulty) {
+  currentDifficulty = difficulty || 'easy';
+  const config = difficultyConfig[currentDifficulty] || difficultyConfig.easy;
+
+  timerDuration = config.timer;
+  livesRemaining = config.lives;
+
   currentScore = 0;
   dom.scoreEl.textContent = '0';
+
+  updateDifficultyDisplay();
+  updateLivesDisplay();
+
   // Build pool & pick first two facts
   buildFactsPool();
   topCardFact = getRandomFact();
@@ -548,16 +674,15 @@ function endGame() {
   stopTimer();
 
   // Check and update best score
-  let isNewRecord = false;
-  if (currentScore > bestScore) {
-    bestScore = currentScore;
-    localStorage.setItem('waterHL_bestScore', bestScore);
-    isNewRecord = true;
-  }
+  const isNewRecord = updateBestScore(currentDifficulty, currentScore);
+  const modeLabel = difficultyLabel[currentDifficulty] || 'EASY';
+  const modeBestScore = bestScores[currentDifficulty] || 0;
 
   // Populate results screen
   dom.finalScore.textContent = currentScore;
-  dom.finalHighScore.textContent = bestScore;
+  dom.finalHighScore.textContent = modeBestScore.toLocaleString();
+  dom.gameoverMode.textContent = `${modeLabel} MODE`;
+  dom.bestCaption.textContent = `BEST (${modeLabel})`;
 
   // Show or hide NEW RECORD banner
   if (isNewRecord && currentScore > 0) {
@@ -568,6 +693,7 @@ function endGame() {
 
   // Show random charity:water impact fact
   displayImpactFact();
+  refreshSplashBestScores();
 
   showScreen(dom.resultsScreen);
 }
@@ -615,26 +741,43 @@ function shareScore() {
   });
 }
 
-// ─── EVENT LISTENERS ───────────────────────────────────────────────────────────
-dom.startBtn.addEventListener('click', startGame);
+function returnToMenu() {
+  const confirmed = confirm('Leave game? Progress will be lost.');
+  if (!confirmed) return;
 
-// Topbar title → return to splash
-document.getElementById('topbar-home-btn').addEventListener('click', () => {
   stopTimer();
   isGuessing = false;
+  currentScore = 0;
+  currentDifficulty = null;
+  livesRemaining = 1;
+  dom.scoreEl.textContent = '0';
+  dom.topbarLives.classList.add('hidden');
   showScreen(dom.splashScreen);
-});
+}
+
+// ─── EVENT LISTENERS ───────────────────────────────────────────────────────────
+dom.difficultyEasyBtn.addEventListener('click', () => startGame('easy'));
+dom.difficultyMediumBtn.addEventListener('click', () => startGame('medium'));
+dom.difficultyHardBtn.addEventListener('click', () => startGame('hard'));
+dom.difficultyExpertBtn.addEventListener('click', () => startGame('expert'));
+
+// Topbar menu button → confirm + return to splash
+document.getElementById('topbar-home-btn').addEventListener('click', returnToMenu);
 
 dom.btnHigher.addEventListener('click', () => handleGuess(true));
 dom.btnLower.addEventListener('click', () => handleGuess(false));
-dom.playAgainBtn.addEventListener('click', startGame);
+dom.playAgainBtn.addEventListener('click', () => startGame(currentDifficulty));
 dom.shareBtn.addEventListener('click', shareScore);
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
   // Handle Enter on splash screen
   if (e.key === 'Enter' && dom.splashScreen.classList.contains('active')) {
-    dom.startBtn.click();
+    if (document.activeElement && document.activeElement.classList.contains('difficulty-btn')) {
+      document.activeElement.click();
+    } else {
+      dom.difficultyEasyBtn.click();
+    }
     return;
   }
 
@@ -657,16 +800,22 @@ document.addEventListener('keydown', (e) => {
 
 // ─── INIT ──────────────────────────────────────────────────────────────────────
 (function init() {
-  // Display stored best score in the game-over screen (preload)
-  dom.finalHighScore.textContent = bestScore;
+  refreshSplashBestScores();
+  dom.finalHighScore.textContent = bestScores.easy.toLocaleString();
+  dom.gameoverMode.textContent = 'EASY MODE';
+  dom.bestCaption.textContent = 'BEST (EASY)';
 
   // Set ARIA labels for interactive elements
   dom.btnHigher.setAttribute('aria-label', 'Guess higher');
   dom.btnLower.setAttribute('aria-label', 'Guess lower');
-  dom.startBtn.setAttribute('aria-label', 'Start the game');
+  dom.difficultyEasyBtn.setAttribute('aria-label', 'Start Easy mode');
+  dom.difficultyMediumBtn.setAttribute('aria-label', 'Start Medium mode');
+  dom.difficultyHardBtn.setAttribute('aria-label', 'Start Hard mode');
+  dom.difficultyExpertBtn.setAttribute('aria-label', 'Start Expert mode');
   dom.playAgainBtn.setAttribute('aria-label', 'Play again');
   dom.shareBtn.setAttribute('aria-label', 'Share your score');
 
-  // Focus management: keep start button focusable
-  dom.startBtn.focus();
+  updateDifficultyDisplay();
+  updateLivesDisplay();
+  dom.difficultyEasyBtn.focus();
 })();

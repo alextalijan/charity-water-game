@@ -177,6 +177,67 @@ body {
   color: var(--blue);
 }
 
+.difficulty-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 16px;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+.difficulty-option {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.difficulty-btn {
+  width: 100%;
+  min-height: 68px;
+  font-size: var(--text-body);
+  font-weight: var(--weight-black);
+  letter-spacing: 1px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+}
+
+.difficulty-best {
+  font-size: 12px;
+  color: var(--dark);
+  opacity: .7;
+  margin-top: -2px;
+  margin-bottom: 6px;
+  text-align: center;
+  min-height: 16px;
+}
+
+.difficulty-best.hidden {
+  display: block !important;
+  visibility: hidden;
+}
+
+.difficulty-btn-easy {
+  background: var(--yellow);
+  color: var(--dark);
+}
+.difficulty-btn-easy:hover { background: var(--yellow-dk); }
+
+.difficulty-btn-medium {
+  background: var(--blue);
+  color: var(--white);
+}
+.difficulty-btn-medium:hover { background: var(--blue-dk); }
+
+.difficulty-btn-hard {
+  background: var(--light-blue);
+  color: var(--white);
+}
+
+.difficulty-btn-expert {
+  background: var(--brown);
+  color: var(--white);
+}
+
 /* ============================================
    SPLASH — WAVE ANIMATION (bottom)
    Adjust: --wave-speed for cycle time
@@ -351,12 +412,12 @@ body {
   color: var(--white);
 }
 
-/* Subtle pulse on start btn */
+/* Subtle pulse animation */
 @keyframes pulse {
   0%,100% { box-shadow: 0 0 0 0 rgba(255,201,7,.45); }
   50%     { box-shadow: 0 0 0 12px rgba(255,201,7,0); }
 }
-.btn-start { animation: pulse 2.5s infinite; }
+.difficulty-btn-easy { animation: pulse 2.5s infinite; }
 
 /* ============================================
    GAME TOP BAR
@@ -380,14 +441,37 @@ body {
   font-size: var(--text-body);
   font-weight: var(--weight-normal);
   color: var(--blue);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: opacity .2s;
+  line-height: 1;
 }
-.topbar-title:hover {
-  opacity: .65;
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.topbar-menu-btn {
+  background: none;
+  border: 1px solid rgba(0, 51, 102, .2);
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--blue);
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px 8px;
+  transition: background .2s, opacity .2s;
+}
+.topbar-menu-btn:hover {
+  background: rgba(0, 51, 102, .08);
+}
+
+.topbar-difficulty {
+  font-size: 14px;
+  color: var(--dark);
+  opacity: .9;
+  font-weight: var(--weight-semi);
+  letter-spacing: .4px;
 }
 
 .topbar-right {
@@ -406,6 +490,12 @@ body {
   font-weight: var(--weight-black);
   font-size: var(--text-h2);
   color: var(--blue);
+}
+
+.topbar-lives {
+  font-size: 20px;
+  letter-spacing: 1px;
+  line-height: 1;
 }
 
 @keyframes timerPulse {
@@ -670,6 +760,17 @@ body {
   margin-bottom: 24px;
 }
 
+.gameover-mode {
+  font-size: var(--text-small);
+  font-weight: var(--weight-bold);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--dark);
+  opacity: .8;
+  margin-top: -14px;
+  margin-bottom: 18px;
+}
+
 /* NEW RECORD banner */
 .new-record {
   display: inline-block;
@@ -803,6 +904,21 @@ body {
   .splash-title { font-size: 32px; }
   .splash-instructions { font-size: 15px; }
 
+  .difficulty-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 380px;
+    gap: 10px;
+  }
+  .difficulty-btn {
+    min-height: 62px;
+    font-size: 15px;
+  }
+  .difficulty-best {
+    margin-top: -4px;
+    margin-bottom: 4px;
+  }
+
   /* Waves — shorter on mobile */
   .wave-container { height: 12vh; }
 
@@ -812,11 +928,15 @@ body {
   .droplet-8 { display: none; }
 
   /* Top bar */
-  .game-topbar { height: 48px; padding: 0 16px; }
-  .topbar-title { font-size: 15px; }
+  .game-topbar { min-height: 48px; height: auto; padding: 8px 16px; }
+  .topbar-left { gap: 8px; flex-wrap: wrap; }
+  .topbar-menu-btn { font-size: 15px; padding: 3px 6px; }
+  .topbar-title { font-size: 13px; }
+  .topbar-difficulty { font-size: 12px; }
   .topbar-score { font-size: 13px; }
   .topbar-score-value { font-size: 15px; }
-  .topbar-right { gap: 12px; }
+  .topbar-right { gap: 8px; }
+  .topbar-lives { font-size: 16px; }
 
   /* Game area stacks vertically */
   .game-area {
@@ -860,6 +980,7 @@ body {
 
   /* Game over */
   .gameover-title { font-size: 28px; }
+  .gameover-mode { margin-top: -10px; margin-bottom: 16px; }
   .gameover-scores { flex-direction: row; gap: 10px; }
   .gameover-score-box { padding: 16px 20px; min-width: 0; flex: 1; }
   .gameover-score-num { font-size: 26px; }

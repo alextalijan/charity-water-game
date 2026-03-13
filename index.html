@@ -55,7 +55,27 @@
     <div class="splash-content">
       <h1 class="splash-title">H2Over/Under</h1>
       <p class="splash-instructions">Compare water usage facts. Guess if the hidden number is <strong class="splash-keyword">HIGHER</strong> or <strong class="splash-keyword">LOWER</strong> than the shown number. One wrong guess = game over!</p>
-      <button id="start-btn" class="btn btn-primary btn-start">START GAME</button>
+      <div class="difficulty-grid" id="difficulty-grid">
+        <div class="difficulty-option">
+          <button class="btn difficulty-btn difficulty-btn-easy" id="difficulty-easy" data-difficulty="easy" aria-label="Start Easy mode">EASY</button>
+          <div class="difficulty-best" id="best-easy">Best: —</div>
+        </div>
+
+        <div class="difficulty-option">
+          <button class="btn difficulty-btn difficulty-btn-medium" id="difficulty-medium" data-difficulty="medium" aria-label="Start Medium mode">MEDIUM</button>
+          <div class="difficulty-best" id="best-medium">Best: —</div>
+        </div>
+
+        <div class="difficulty-option">
+          <button class="btn difficulty-btn difficulty-btn-hard" id="difficulty-hard" data-difficulty="hard" aria-label="Start Hard mode">HARD</button>
+          <div class="difficulty-best" id="best-hard">Best: —</div>
+        </div>
+
+        <div class="difficulty-option">
+          <button class="btn difficulty-btn difficulty-btn-expert" id="difficulty-expert" data-difficulty="expert" aria-label="Start Expert mode">EXPERT</button>
+          <div class="difficulty-best" id="best-expert">Best: —</div>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -65,10 +85,13 @@
     <!-- Top bar -->
     <div class="game-topbar">
       <div class="topbar-left">
-        <button class="topbar-title" id="topbar-home-btn" aria-label="Return to start screen">H2Over/Under</button>
+        <button class="topbar-menu-btn" id="topbar-home-btn" aria-label="Return to menu">🏠</button>
+        <span class="topbar-title">H2Over/Under</span>
+        <span class="topbar-difficulty" id="topbar-difficulty">- EASY</span>
       </div>
       <div class="topbar-right">
         <span class="topbar-score">SCORE: <strong class="topbar-score-value" id="score" aria-live="polite" aria-atomic="true">0</strong></span>
+        <span class="topbar-lives hidden" id="topbar-lives" aria-live="polite" aria-atomic="true">❤️❤️❤️</span>
       </div>
     </div>
 
@@ -116,6 +139,7 @@
     <div class="gameover-content">
       <span class="gameover-label">GAME OVER</span>
       <h2 class="gameover-title">H2Over/Under</h2>
+      <div class="gameover-mode" id="gameover-mode">EASY MODE</div>
 
       <!-- NEW RECORD banner (hidden by default) -->
       <div class="new-record hidden" id="new-record">
@@ -128,7 +152,7 @@
           <span class="gameover-score-num" id="final-score">0</span>
         </div>
         <div class="gameover-score-box">
-          <span class="gameover-score-caption">BEST SCORE</span>
+          <span class="gameover-score-caption" id="best-score-caption">BEST (EASY)</span>
           <span class="gameover-score-num" id="final-high-score">0</span>
         </div>
       </div>
